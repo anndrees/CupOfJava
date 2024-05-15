@@ -35,6 +35,11 @@ Ejecutar ```Main.java```
   java Main.class
 ```
 
+## Tecnologías
+
+**Lenguaje:** Java
+
+**GUI:** JavaFX
 
 ## Autores
 
