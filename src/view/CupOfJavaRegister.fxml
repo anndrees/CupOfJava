@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CupOfJavaRegisterController">
+    <children>
+        <TextField fx:id="txtUsername" alignment="CENTER" layoutX="100.0" layoutY="201.0" prefHeight="35.0" prefWidth="400.0" promptText="Nombre de usuario">
+            <font>
+                <Font name="Rubik-Bold" size="18.0" />
+            </font>
+        </TextField>
+        <PasswordField fx:id="pwdPassword" alignment="CENTER" layoutX="100.0" layoutY="254.0" prefHeight="35.0" prefWidth="400.0" promptText="Contraseña">
+            <font>
+                <Font name="Rubik-Bold" size="18.0" />
+            </font>
+        </PasswordField>
+        <Button fx:id="btnRegister" layoutX="206.0" layoutY="323.0" mnemonicParsing="false" onAction="#register" prefHeight="35.0" prefWidth="188.0" text="Registrarte">
+            <font>
+                <Font name="Rubik-Bold" size="20.0" />
+            </font>
+        </Button>
+        <Label layoutX="151.0" layoutY="392.0" text="¿Ya tienes un perfil?">
+            <font>
+                <Font name="Rubik-Bold" size="18.0" />
+            </font>
+        </Label>
+        <Hyperlink fx:id="linkLogin" layoutX="339.0" layoutY="388.0" onAction="#abrirLogin" text="Inicia sesión">
+            <font>
+                <Font name="Rubik-Bold" size="18.0" />
+            </font>
+        </Hyperlink>
+        <ImageView fx:id="imgLogo" fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="https://i.ibb.co/ckJsdsr/logo.png" />
+         </image>
+        </ImageView>
+    </children>
+</AnchorPane>
