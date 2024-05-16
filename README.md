@@ -28,11 +28,11 @@ Ir al directorio del proyecto
   cd my-project
 ```
 
-Ejecutar ```Main.java```
+Ejecutar ```app.Main.java```
 
 ```bash
-  javac Main.java
-  java Main.class
+  javac app.Main.java
+  java app.Main.class
 ```
 
 ## Tecnologías

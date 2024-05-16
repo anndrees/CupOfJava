@@ -82,7 +82,7 @@ public class RegisterController implements Initializable{
             dialog.setResizable(false);
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()){
-                System.out.println("Texto ingresado: " + result.get());
+                System.out.println("Texto: " + result.get());
                 if(result.get().equals("admin")){
                     System.out.println("Registro correcto");
                 }
