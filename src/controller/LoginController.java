@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class CupOfJavaLoginController implements Initializable{
+public class LoginController implements Initializable{
 
     @FXML
     private Button btnLogin;
@@ -51,6 +51,9 @@ public class CupOfJavaLoginController implements Initializable{
         String password = pwdPassword.getText();
 
         if (username.equals("admin") && password.equals("admin")) {
+
+
+
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Cup of Java");
             alert.setContentText("¡Bienvenido!");
@@ -84,10 +87,10 @@ public class CupOfJavaLoginController implements Initializable{
         Stage mainStage = (Stage) currentScene.getWindow();
 
         // Cargar la vista de registro en la ventana principal
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/CupOfJavaRegister.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Register.fxml"));
         Parent root = loader.load();
         mainStage.setScene(new Scene(root));
-        mainStage.setTitle("Register for Cup of Java");
+        mainStage.setTitle("Cup of Java - Register");
         mainStage.setResizable(false);
         mainStage.show();
     }

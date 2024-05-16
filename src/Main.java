@@ -17,18 +17,18 @@ public class Main extends Application {
 	@Override
 	public void start(Stage loginStage) throws Exception {
 		stage = loginStage;
-		Parent root = FXMLLoader.load(getClass().getResource("view/CupOfJavaLogin.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("view/Login.fxml"));
 		stage.setScene(new Scene(root));
-		stage.setTitle("Cup of Java");
+		stage.setTitle("Cup of Java - Login");
 		stage.setResizable(false);
 		//loginStage.getIcons().add(new javafx.scene.image.Image("imgs/faviconBlack.png"));
 		stage.show();
 	}
 
 	public void loadRegisterView() throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("view/CupOfJavaRegister.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("view/Register.fxml"));
 		stage.setScene(new Scene(root));
-		stage.setTitle("Register for Cup of Java");
+		stage.setTitle("Cup of Java - Register");
 		stage.setResizable(false);
 		stage.show();
 	}

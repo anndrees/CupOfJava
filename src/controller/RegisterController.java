@@ -7,18 +7,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class CupOfJavaRegisterController implements Initializable{
+public class RegisterController implements Initializable{
 
     @FXML
     private Button btnRegister;
@@ -56,17 +54,40 @@ public class CupOfJavaRegisterController implements Initializable{
         Stage mainStage = (Stage) currentScene.getWindow();
 
         // Cargar la vista de login en la ventana principal
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/CupOfJavaLogin.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Login.fxml"));
         Parent root = loader.load();
         mainStage.setScene(new Scene(root));
-        mainStage.setTitle("Cup of Java");
+        mainStage.setTitle("Cup of Java - Login");
         mainStage.setResizable(false);
         mainStage.show();
     }
 
     @FXML
     void register(ActionEvent event) {
-
+        if(txtUsername.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Cup of Java");
+            alert.setContentText("Por favor, introduce un nombre de usuario");
+            alert.showAndWait();
+        } else if(pwdPassword.getText().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Cup of Java");
+            alert.setContentText("Por favor, introduce una contraseña");
+            alert.showAndWait();
+        } else {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Cup of Java - Autorización");
+            dialog.setHeaderText("Autorización requerida");
+            dialog.setContentText("Debes introducir la contraseña del administrador para poder registrar el usuario:");
+            dialog.setResizable(false);
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()){
+                System.out.println("Texto ingresado: " + result.get());
+                if(result.get().equals("admin")){
+                    System.out.println("Registro correcto");
+                }
+            }
+        }
     }
 
 }
