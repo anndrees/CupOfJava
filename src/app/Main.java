@@ -19,7 +19,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage loginStage) throws Exception {
 		stage = loginStage;
-		Parent root = FXMLLoader.load(getClass().getResource("view/Login.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("../view/Login.fxml"));
 		stage.setScene(new Scene(root));
 		stage.setTitle("Cup of Java - Login");
 		stage.setResizable(false);
