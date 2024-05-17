@@ -9,14 +9,22 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import model.Usuario;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static model.Usuario.users;
+
 public class RegisterController implements Initializable{
+
+    @FXML
+    private AnchorPane anchorRegister;
 
     @FXML
     private Button btnRegister;
@@ -43,21 +51,20 @@ public class RegisterController implements Initializable{
     }
 
     @FXML
+    void unfocus(MouseEvent event) {
+        txtUsername.getParent().requestFocus();
+        pwdPassword.getParent().requestFocus();
+    }
+
+    @FXML
     void abrirLogin(ActionEvent event) throws IOException{
-        // Obtener el nodo fuente del evento (en este caso, el botón "linkLogin")
         Node sourceNode = (Node) event.getSource();
-
-        // Obtener la escena actual desde el nodo fuente
         Scene currentScene = sourceNode.getScene();
-
-        // Obtener la ventana principal (Stage) desde la escena actual
         Stage mainStage = (Stage) currentScene.getWindow();
-
-        // Cargar la vista de login en la ventana principal
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Login.fxml"));
         Parent root = loader.load();
         mainStage.setScene(new Scene(root));
-        mainStage.setTitle("Cup of Java - Login");
+        mainStage.setTitle("Cup of Java - Inicio de sesión");
         mainStage.setResizable(false);
         mainStage.show();
     }
@@ -74,20 +81,38 @@ public class RegisterController implements Initializable{
             alert.setTitle("Cup of Java");
             alert.setContentText("Por favor, introduce una contraseña");
             alert.showAndWait();
-        } else {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Cup of Java - Autorización");
-            dialog.setHeaderText("Autorización requerida");
-            dialog.setContentText("Debes introducir la contraseña del administrador para poder registrar el usuario:");
-            dialog.setResizable(false);
-            Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()){
-                System.out.println("Texto: " + result.get());
-                if(result.get().equals("admin")){
-                    System.out.println("Registro correcto");
-                }
-            }
-        }
+        } else{
+			Optional<String> result;
+            try{
+                do{
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("Cup of Java - Autorización");
+                    dialog.setHeaderText("Autorización requerida");
+                    dialog.setContentText("Debes introducir la contraseña del administrador para poder registrar el usuario:");
+                    dialog.setResizable(false);
+                    result = dialog.showAndWait();
+                    if(result.isPresent()){
+                        System.out.println("Texto: " + result.get());
+                        if(result.get().equals("admin")){
+                            Usuario u = new Usuario(txtUsername.getText(), pwdPassword.getText());
+                            users.add(u);
+                            System.out.println("Registro correcto");
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setTitle("Cup of Java");
+                            alert.setHeaderText("Registro correcto");
+                            alert.setContentText("Ahora puedes iniciar sesión");
+                            alert.showAndWait();
+                        }else{
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Cup of Java");
+                            alert.setHeaderText("Contraseña de administrador incorrecta");
+                            alert.setContentText("Vuelva a intentarlo");
+                            alert.setResizable(false);
+                            alert.showAndWait();
+                        }
+                    }
+                }while(!result.get().equals("admin"));
+            }catch(Exception e){}
+		}
     }
-
 }

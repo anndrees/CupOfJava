@@ -1,4 +1,4 @@
-#btnLogin {
+#btnRegister {
     -fx-border-radius: 10px;
     -fx-border-color: #612713;
     -fx-border-width: 0px;
@@ -6,12 +6,12 @@
     -fx-text-fill: #fcfcfc;
 }
 
-#btnLogin:hover {
+#btnRegister:hover {
     -fx-background-color: #612713;
     -fx-cursor: hand;
 }
 
-#btnLogin:pressed {
+#btnRegister:pressed {
     -fx-background-color: #c79f92;
 }
 
