@@ -98,7 +98,8 @@ public class RegisterController implements Initializable{
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Inicio de sesión");
         mainStage.setResizable(false);
-        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+		//noinspection DataFlowIssue
+		mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }
 
@@ -148,7 +149,7 @@ public class RegisterController implements Initializable{
                         }
                     }
                 }while(!result.get().equals("admin"));
-            }catch(Exception e){}
+            }catch(Exception ignored){}
 		}
     }
 }

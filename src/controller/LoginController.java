@@ -1,7 +1,5 @@
 package controller;
 
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,10 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.Usuario;
@@ -24,8 +20,6 @@ import model.Usuario;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static model.Usuario.users;
@@ -39,10 +33,7 @@ public class LoginController implements Initializable{
     @FXML
     private Button btnLogin;
 
-    @FXML
-    private ImageView imgLogo;
-
-    @FXML
+	@FXML
     private Hyperlink linkSignUp;
 
     @FXML
@@ -93,7 +84,7 @@ public class LoginController implements Initializable{
     }
 
     @FXML
-    void unfocus(MouseEvent event) {
+    void unfocus() {
         txtUsername.getParent().requestFocus();
         pwdPassword.getParent().requestFocus();
     }
@@ -121,11 +112,12 @@ public class LoginController implements Initializable{
                         mainStage.setScene(new Scene(root));
                         mainStage.setTitle("Cup of Java");
                         mainStage.setResizable(false);
-                        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+						//noinspection DataFlowIssue
+						mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
                         mainStage.setX((Toolkit.getDefaultToolkit().getScreenSize().getWidth() - mainStage.getWidth()) / 2);
                         mainStage.setY((Toolkit.getDefaultToolkit().getScreenSize().getHeight() - mainStage.getHeight()) / 2);
                         mainStage.show();
-					}catch(Exception e){}
+					}catch(Exception ignored){}
                 }
             }
         }
@@ -141,7 +133,8 @@ public class LoginController implements Initializable{
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Registro");
         mainStage.setResizable(false);
-        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+		//noinspection DataFlowIssue
+		mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }
 }

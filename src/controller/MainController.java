@@ -9,11 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 
 public class MainController {
@@ -39,7 +36,8 @@ public class MainController {
     @FXML
     private TableView<?> tblArticulos;
 
-    @FXML
+    @SuppressWarnings("CommentedOutCode")
+	@FXML
     void openFileChooser(ActionEvent event) {
         /*
         FileChooser fileChooser = new FileChooser();
@@ -63,7 +61,8 @@ public class MainController {
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Inicio de sesión");
         mainStage.setResizable(false);
-        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+		//noinspection DataFlowIssue
+		mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }
 
@@ -76,7 +75,8 @@ public class MainController {
         if (alert.getResult() == ButtonType.OK) {
             try {
                 abrirLogin(event);
-            }catch(IOException e){}
+            }catch(IOException ignored){
+            }
 		}
     }
 }
