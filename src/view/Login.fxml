@@ -10,19 +10,19 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorLogin" minHeight="500.0" minWidth="600.0" onMouseClicked="#unfocus" prefHeight="500.0" prefWidth="600.0" stylesheets="@../app/assets/styles/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+<AnchorPane fx:id="anchorLogin" minHeight="500.0" minWidth="600.0" onKeyPressed="#focusUsername" onMouseClicked="#unfocus" prefHeight="500.0" prefWidth="600.0" stylesheets="@../app/assets/styles/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
-      <TextField fx:id="txtUsername" alignment="CENTER" layoutX="100.0" layoutY="201.0" prefHeight="35.0" prefWidth="400.0" promptText="Nombre de usuario">
+      <TextField fx:id="txtUsername" alignment="CENTER" layoutX="100.0" layoutY="201.0" onKeyPressed="#focusPassword" prefHeight="35.0" prefWidth="400.0" promptText="Nombre de usuario">
          <font>
             <Font name="Rubik-Bold" size="18.0" />
          </font>
       </TextField>
-      <PasswordField fx:id="pwdPassword" alignment="CENTER" layoutX="100.0" layoutY="254.0" prefHeight="35.0" prefWidth="400.0" promptText="Contraseña">
+      <PasswordField fx:id="pwdPassword" alignment="CENTER" layoutX="100.0" layoutY="254.0" onKeyPressed="#focusLoginBtn" prefHeight="35.0" prefWidth="400.0" promptText="Contraseña">
          <font>
             <Font name="Rubik-Bold" size="18.0" />
          </font>
       </PasswordField>
-      <Button fx:id="btnLogin" layoutX="206.0" layoutY="323.0" mnemonicParsing="false" onAction="#login" prefHeight="35.0" prefWidth="188.0" text="Iniciar sesión">
+      <Button fx:id="btnLogin" layoutX="206.0" layoutY="323.0" mnemonicParsing="false" onAction="#login" onKeyPressed="#focusSignupLink" prefHeight="35.0" prefWidth="188.0" text="Iniciar sesión">
          <font>
             <Font name="Rubik-Bold" size="20.0" />
          </font>
@@ -32,7 +32,7 @@
             <Font name="Rubik-Bold" size="18.0" />
          </font>
       </Label>
-      <Hyperlink fx:id="linkSignUp" layoutX="339.0" layoutY="388.0" onAction="#abrirRegister" text="Regístrate">
+      <Hyperlink fx:id="linkSignUp" layoutX="339.0" layoutY="388.0" onAction="#abrirRegister" onKeyPressed="#focusUsername" text="Regístrate">
          <font>
             <Font name="Rubik-Bold" size="18.0" />
          </font>

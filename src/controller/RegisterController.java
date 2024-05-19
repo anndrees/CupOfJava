@@ -8,7 +8,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -41,9 +44,38 @@ public class RegisterController implements Initializable{
     @FXML
     private TextField txtUsername;
 
+    @FXML
+    void focusLoginLink(KeyEvent event) {
+        if(event.getCode() == KeyCode.TAB) {
+            linkLogin.requestFocus();
+        }
+    }
+
+    @FXML
+    void focusPassword(KeyEvent event) {
+        if((event.getCode() == KeyCode.TAB) || (event.getCode() == KeyCode.ENTER)) {
+            pwdPassword.requestFocus();
+        }
+    }
+
+    @FXML
+    void focusSignupBtn(KeyEvent event) {
+        if(event.getCode() == KeyCode.ENTER) {
+            btnRegister.fire();
+        }else if(event.getCode() == KeyCode.TAB) {
+            btnRegister.requestFocus();
+        }
+    }
+
+    @FXML
+    void focusUsername(KeyEvent event) {
+        if(event.getCode() == KeyCode.TAB) {
+            txtUsername.requestFocus();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
-        // Necesito que no haya ningun campo con el foco
         txtUsername.setFocusTraversable(false);
         pwdPassword.setFocusTraversable(false);
         btnRegister.setFocusTraversable(false);
@@ -66,6 +98,7 @@ public class RegisterController implements Initializable{
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Inicio de sesión");
         mainStage.setResizable(false);
+        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }
 
@@ -92,16 +125,19 @@ public class RegisterController implements Initializable{
                     dialog.setResizable(false);
                     result = dialog.showAndWait();
                     if(result.isPresent()){
-                        System.out.println("Texto: " + result.get());
+                        //System.out.println("Texto: " + result.get());
                         if(result.get().equals("admin")){
                             Usuario u = new Usuario(txtUsername.getText(), pwdPassword.getText());
                             users.add(u);
-                            System.out.println("Registro correcto");
+                            //System.out.println("Registro correcto");
                             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                             alert.setTitle("Cup of Java");
                             alert.setHeaderText("Registro correcto");
                             alert.setContentText("Ahora puedes iniciar sesión");
                             alert.showAndWait();
+                            txtUsername.clear();
+                            pwdPassword.clear();
+                            abrirLogin(event);
                         }else{
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Cup of Java");

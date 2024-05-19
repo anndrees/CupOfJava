@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-	private Stage stage; // Declaración de loginStage como miembro de la clase
+	private Stage stage;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -24,7 +24,7 @@ public class Main extends Application {
 		stage.setScene(new Scene(root));
 		stage.setTitle("Cup of Java - Inicio de sesión");
 		stage.setResizable(false);
-		//loginStage.getIcons().add(new Image(getClass().getResourceAsStream("@imgs/logo.png")));
+		stage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
 		stage.show();
 	}
 
@@ -33,6 +33,7 @@ public class Main extends Application {
 		stage.setScene(new Scene(root));
 		stage.setTitle("Cup of Java - Register");
 		stage.setResizable(false);
+		stage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
 		stage.show();
 	}
 }

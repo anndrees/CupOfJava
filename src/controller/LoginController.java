@@ -10,12 +10,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.Usuario;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,9 +51,39 @@ public class LoginController implements Initializable{
     @FXML
     private TextField txtUsername;
 
+    @FXML
+    void focusPassword(KeyEvent event) {
+        if((event.getCode() == KeyCode.TAB) || (event.getCode() == KeyCode.ENTER)) {
+            pwdPassword.requestFocus();
+        }
+    }
+
+    @FXML
+    void focusLoginBtn(KeyEvent event) {
+        if(event.getCode() == KeyCode.ENTER) {
+            btnLogin.fire();
+        }else if(event.getCode() == KeyCode.TAB) {
+            btnLogin.requestFocus();
+        }
+    }
+
+    @FXML
+    void focusSignupLink(KeyEvent event) {
+        if(event.getCode() == KeyCode.TAB) {
+            linkSignUp.requestFocus();
+        }
+    }
+
+
+    @FXML
+    void focusUsername(KeyEvent event) {
+        if(event.getCode() == KeyCode.TAB) {
+            txtUsername.requestFocus();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
-        // Necesito que no haya ningun campo con el foco
         txtUsername.setFocusTraversable(false);
         pwdPassword.setFocusTraversable(false);
         btnLogin.setFocusTraversable(false);
@@ -63,77 +99,49 @@ public class LoginController implements Initializable{
     }
 
     @FXML
-    void login(ActionEvent event) {
-        // Quiero que cuando se pulse el boton, compruebe si el nombre de usuario es "admin" y la contraseña es "admin"
-        // Si los campos son correctos, deberá mostrar la página principal del programa
-        // Si alguno de los campos está vacío deberá salir una alerta WARNING y que el primer campo que esté vacío haga un requestFocus()
-
-
+    void login(ActionEvent event){
         String username = txtUsername.getText();
         String password = pwdPassword.getText();
 
-        /*if (username.equals("admin") && password.equals("admin")){
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Cup of Java");
-            alert.setContentText("¡Bienvenido!");
-            alert.showAndWait();
-
-        } else */if(username.isEmpty() || password.isEmpty()){
+        if(username.isEmpty() || password.isEmpty()){
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Cup of Java");
             alert.setContentText("Por favor, rellene todos los campos");
             alert.showAndWait();
 
-        }else {// verfica que nombre de usuario exista como objeto Usuario revisando todos los usuarios sin el uso de un metodo getUsers()
+        }else {
             for (Usuario u : Usuario.getUsers()) {
                 if(username.equals(u.getUsername()) && password.equals(u.getPassword())){
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Cup of Java");
-                    alert.setContentText("¡Bienvenido!");
-                    alert.showAndWait();
-
-                    // Carga la vista principal de la aplicación
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
-					Parent root = null;
+                    Parent root;
 					try{
-						root = loader.load();
-					}catch(IOException e){
-						throw new RuntimeException(e);
-					}
-					Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    mainStage.setScene(new Scene(root));
-                    mainStage.setTitle("Cup of Java");
-                    mainStage.setResizable(false);
-                    mainStage.show();
+                        root = loader.load();
+                        Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        mainStage.setScene(new Scene(root));
+                        mainStage.setTitle("Cup of Java");
+                        mainStage.setResizable(false);
+                        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+                        mainStage.setX((Toolkit.getDefaultToolkit().getScreenSize().getWidth() - mainStage.getWidth()) / 2);
+                        mainStage.setY((Toolkit.getDefaultToolkit().getScreenSize().getHeight() - mainStage.getHeight()) / 2);
+                        mainStage.show();
+					}catch(Exception e){}
                 }
             }
-
-
         }
-
     }
 
     @FXML
     void abrirRegister(ActionEvent event) throws IOException{
-        // Obtener el nodo fuente del evento (en este caso, el botón "abrirRegister")
         Node sourceNode = (Node) event.getSource();
-
-        // Obtener la escena actual desde el nodo fuente
         Scene currentScene = sourceNode.getScene();
-
-        // Obtener la ventana principal (Stage) desde la escena actual
         Stage mainStage = (Stage) currentScene.getWindow();
-
-        // Cargar la vista de registro en la ventana principal
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Register.fxml"));
         Parent root = loader.load();
         mainStage.setScene(new Scene(root));
-        mainStage.setTitle("Cup of Java - Register");
+        mainStage.setTitle("Cup of Java - Registro");
         mainStage.setResizable(false);
+        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }
-
-
 }
