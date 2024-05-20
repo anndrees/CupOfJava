@@ -98,7 +98,6 @@ public class RegisterController implements Initializable{
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Inicio de sesión");
         mainStage.setResizable(false);
-		//noinspection DataFlowIssue
 		mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }

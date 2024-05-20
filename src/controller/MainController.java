@@ -16,13 +16,19 @@ import java.io.IOException;
 public class MainController {
 
     @FXML
-    private ImageView btnBuscar;
+    private Button btnBuscar;
 
     @FXML
     private Button btnCobrar;
 
     @FXML
+    private Button btnHamburgerMenu;
+
+    @FXML
     private Button btnTickets;
+
+    @FXML
+    private Button btnVerticalMenu;
 
     @FXML
     private ComboBox<?> cboxCatArticulos;
@@ -32,6 +38,9 @@ public class MainController {
 
     @FXML
     private Hyperlink linkCerrarSesion;
+
+    @FXML
+    private ListView<?> listTicket;
 
     @FXML
     private TableView<?> tblArticulos;
