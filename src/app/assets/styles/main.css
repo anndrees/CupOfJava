@@ -1,0 +1,16 @@
+#btnTickets {
+    -fx-border-radius: 10px;
+    -fx-border-color: #612713;
+    -fx-border-width: 0px;
+    -fx-background-color: #782203;
+    -fx-text-fill: #fcfcfc;
+}
+
+#btnTickets:hover {
+    -fx-background-color: #612713;
+    -fx-cursor: hand;
+}
+
+#btnTickets:pressed {
+    -fx-background-color: #ba7861;
+}

@@ -3,17 +3,25 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class MainController {
+public class MainController implements Initializable{
+
+    @FXML
+    private AnchorPane anchorMain;
 
     @FXML
     private Button btnBuscar;
@@ -45,7 +53,21 @@ public class MainController {
     @FXML
     private TableView<?> tblArticulos;
 
-    @SuppressWarnings("CommentedOutCode")
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle){
+        // Quitamos el foco de todos los elementos
+        btnBuscar.setFocusTraversable(false);
+        btnCobrar.setFocusTraversable(false);
+        btnHamburgerMenu.setFocusTraversable(false);
+        btnTickets.setFocusTraversable(false);
+        btnVerticalMenu.setFocusTraversable(false);
+        cboxCatArticulos.setFocusTraversable(false);
+        lblTicket.setFocusTraversable(false);
+        linkCerrarSesion.setFocusTraversable(false);
+        listTicket.setFocusTraversable(false);
+        tblArticulos.setFocusTraversable(false);
+    }
+
 	@FXML
     void openFileChooser(ActionEvent event) {
         /*
@@ -70,7 +92,6 @@ public class MainController {
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Inicio de sesión");
         mainStage.setResizable(false);
-		//noinspection DataFlowIssue
 		mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }
@@ -87,5 +108,11 @@ public class MainController {
             }catch(IOException ignored){
             }
 		}
+    }
+
+
+    @FXML
+    void unfocus() {
+        tblArticulos.getParent().requestFocus();
     }
 }

@@ -12,12 +12,12 @@
 
 <AnchorPane fx:id="anchorLogin" minHeight="500.0" minWidth="600.0" onKeyPressed="#focusUsername" onMouseClicked="#unfocus" prefHeight="500.0" prefWidth="600.0" stylesheets="@../app/assets/styles/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
-      <TextField fx:id="txtUsername" alignment="CENTER" layoutX="100.0" layoutY="201.0" onKeyPressed="#focusPassword" prefHeight="35.0" prefWidth="400.0" promptText="Nombre de usuario">
+      <TextField fx:id="txtUsername" alignment="CENTER" layoutX="100.0" layoutY="201.0" onKeyPressed="#focusPassword" prefHeight="35.0" prefWidth="400.0" promptText="Nombre de usuario" text="admin">
          <font>
             <Font name="Rubik-Bold" size="18.0" />
          </font>
       </TextField>
-      <PasswordField fx:id="pwdPassword" alignment="CENTER" layoutX="100.0" layoutY="254.0" onKeyPressed="#focusLoginBtn" prefHeight="35.0" prefWidth="400.0" promptText="Contraseña">
+      <PasswordField fx:id="pwdPassword" alignment="CENTER" layoutX="100.0" layoutY="254.0" onKeyPressed="#focusLoginBtn" prefHeight="35.0" prefWidth="400.0" promptText="Contraseña" text="admin">
          <font>
             <Font name="Rubik-Bold" size="18.0" />
          </font>

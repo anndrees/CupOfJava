@@ -22,6 +22,9 @@
     -fx-background-color: #fff;
 }
 
-#txtusername:focus, #pwdPassword:focus {
+#txtUsername:focus, #pwdPassword:focus {
     -fx-border-color: #782203;
+    -fx-border-width: 3px;
+    -fx-background-color: #fff;
+    -fx-text-fill: #782203;
 }

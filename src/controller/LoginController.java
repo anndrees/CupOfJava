@@ -86,7 +86,6 @@ public class LoginController implements Initializable{
     @FXML
     void unfocus() {
         txtUsername.getParent().requestFocus();
-        pwdPassword.getParent().requestFocus();
     }
 
     @FXML
