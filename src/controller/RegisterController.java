@@ -15,6 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import model.Usuario;
 
 import java.io.IOException;
@@ -43,6 +44,8 @@ public class RegisterController implements Initializable{
 
     @FXML
     private TextField txtUsername;
+
+
 
     @FXML
     void focusLoginLink(KeyEvent event) {
@@ -123,6 +126,17 @@ public class RegisterController implements Initializable{
                     dialog.setHeaderText("Autorización requerida");
                     dialog.setContentText("Debes introducir la contraseña del administrador para poder registrar el usuario:");
                     dialog.setResizable(false);
+                    dialog.initStyle(StageStyle.TRANSPARENT);
+                    dialog.getDialogPane().setStyle("-fx-background-color: #c79f92;");
+                    dialog.getDialogPane().setGraphic(new ImageView(getClass().getResource("../app/assets/imgs/auth.png").toString()));
+                    TextField input = dialog.getEditor();
+                    input.setStyle("-fx-background-color: white;");
+                    input.setStyle("-fx-border-color: black;");
+                    input.setStyle("-fx-border-width: 1px;");
+                    input.setStyle("-fx-border-radius: 5px;");
+                    input.setStyle("-fx-padding: 5px;");
+                    input.setStyle("-fx-font-size: 14px;");
+                    input.setStyle("-fx-text-fill: black;");
                     result = dialog.showAndWait();
                     if(result.isPresent()){
                         //System.out.println("Texto: " + result.get());

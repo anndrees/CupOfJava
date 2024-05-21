@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,9 +13,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.Usuario;
 
 import java.awt.*;
@@ -101,23 +104,33 @@ public class LoginController implements Initializable{
             alert.showAndWait();
 
         }else {
+            Usuario user = null;
             for (Usuario u : Usuario.getUsers()) {
                 if(username.equals(u.getUsername()) && password.equals(u.getPassword())){
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
-                    Parent root;
-					try{
-                        root = loader.load();
-                        Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        mainStage.setScene(new Scene(root));
-                        mainStage.setTitle("Cup of Java");
-                        mainStage.setResizable(false);
-						//noinspection DataFlowIssue
-						mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
-                        mainStage.setX((Toolkit.getDefaultToolkit().getScreenSize().getWidth() - mainStage.getWidth()) / 2);
-                        mainStage.setY((Toolkit.getDefaultToolkit().getScreenSize().getHeight() - mainStage.getHeight()) / 2);
-                        mainStage.show();
-					}catch(Exception ignored){}
+                    user = u;
                 }
+            }
+            if (user != null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
+                Parent root;
+                try{
+                    root = loader.load();
+                    MainController mainController = loader.getController();
+                    mainController.setCurrentUser(user);
+                    Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    mainStage.setScene(new Scene(root));
+                    mainStage.setTitle("Cup of Java");
+                    mainStage.setResizable(false);
+                    mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+                    mainStage.centerOnScreen();
+                    mainStage.show();
+                }catch(Exception ignored){}
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Cup of Java");
+                alert.setHeaderText("Credenciales incorrectas");
+                alert.setContentText("Nombre de usuario o contraseña incorrectos, intentalo de nuevo");
+                alert.showAndWait();
             }
         }
     }
@@ -132,7 +145,6 @@ public class LoginController implements Initializable{
         mainStage.setScene(new Scene(root));
         mainStage.setTitle("Cup of Java - Registro");
         mainStage.setResizable(false);
-		//noinspection DataFlowIssue
 		mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
         mainStage.show();
     }

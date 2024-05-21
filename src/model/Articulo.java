@@ -10,6 +10,8 @@ public abstract class Articulo{
 		this.precio = precio;
 	}
 
+
+
 	public abstract String getNombre();
 	public abstract double getPrecio();
 }

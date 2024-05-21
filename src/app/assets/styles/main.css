@@ -1,4 +1,4 @@
-#btnTickets {
+.button{
     -fx-border-radius: 10px;
     -fx-border-color: #612713;
     -fx-border-width: 0px;
@@ -6,11 +6,13 @@
     -fx-text-fill: #fcfcfc;
 }
 
-#btnTickets:hover {
+.button:hover{
     -fx-background-color: #612713;
     -fx-cursor: hand;
 }
 
-#btnTickets:pressed {
+.button:pressed {
     -fx-background-color: #ba7861;
 }
+
+

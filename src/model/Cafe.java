@@ -16,4 +16,5 @@ public class Cafe extends Articulo{
 		return precio;
 	}
 
+
 }

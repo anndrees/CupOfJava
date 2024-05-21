@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.awt.*;
+
 public class Main extends Application {
 
 	public static void main(String[] args) {
@@ -21,5 +23,6 @@ public class Main extends Application {
 		stage.setResizable(false);
 		stage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
 		stage.show();
+		stage.centerOnScreen();
 	}
 }
