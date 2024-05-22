@@ -1,5 +1,9 @@
 package controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Usuario;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -107,30 +112,46 @@ public class LoginController implements Initializable{
                     user = u;
                 }
             }
-            if (user != null) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
-                Parent root;
-                try{
-                    root = loader.load();
-                    MainController mainController = loader.getController();
-                    mainController.setCurrentUser(user);
-                    Stage mainStage = new Stage();
-                    mainStage.setScene(new Scene(root));
-                    mainStage.setTitle("Cup of Java");
-                    mainStage.setResizable(false);
-                    mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
-                    mainStage.centerOnScreen();
-                    //mainStage.initStyle(StageStyle.UNDECORATED);
-                    mainStage.show();
+            try{
+                FileReader reader = new FileReader("src\\app\\assets\\json\\users.json");
+                JsonParser parser = new JsonParser();
+                JsonElement json = parser.parse(reader);
+                JsonArray users = json.getAsJsonArray();
+                boolean found = false;
+                for (JsonElement userElement : users) {
+                    JsonObject userObj = userElement.getAsJsonObject();
+                    if (userObj.get("username").getAsString().equals(username) && userObj.get("password").getAsString().equals(password)) {
+                        found = true;
+                    }
+                }
 
-                    ((Node) (event.getSource())).getScene().getWindow().hide();
-                }catch(Exception ignored){}
-            } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Cup of Java");
-                alert.setHeaderText("Credenciales incorrectas");
-                alert.setContentText("Nombre de usuario o contraseña incorrectos, intentalo de nuevo");
-                alert.showAndWait();
+                if (found) {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
+                    Parent root;
+                    try{
+                        root = loader.load();
+                        MainController mainController = loader.getController();
+                        mainController.setCurrentUser(user);
+                        Stage mainStage = new Stage();
+                        mainStage.setScene(new Scene(root));
+                        mainStage.setTitle("Cup of Java");
+                        mainStage.setResizable(false);
+                        mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+                        mainStage.centerOnScreen();
+                        //mainStage.initStyle(StageStyle.UNDECORATED);
+                        mainStage.show();
+
+                        ((Node) (event.getSource())).getScene().getWindow().hide();
+                    }catch(Exception ignored){}
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Cup of Java");
+                    alert.setHeaderText("Credenciales incorrectas");
+                    alert.setContentText("Nombre de usuario o contraseña incorrectos, intentalo de nuevo");
+                    alert.showAndWait();
+                }
+            }catch(IOException e){
+                e.printStackTrace();
             }
         }
     }

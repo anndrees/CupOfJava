@@ -78,9 +78,6 @@ public class MainController implements Initializable{
     private Label lblTicket;
 
     @FXML
-    private Hyperlink linkCerrarSesion;
-
-    @FXML
     private ListView<?> listTicket;
 
     @FXML
@@ -227,15 +224,28 @@ public class MainController implements Initializable{
 
     @FXML
     void buscar(KeyEvent event) {
-        // Añadir un listener que detecte si va cambiando el texto de txtSearch
 
         if(event.getCode() == KeyCode.ESCAPE) {
             txtSearch.setVisible(false);
-            txtSearch.clear();
         }
 
         if(event.getCode() == KeyCode.ENTER) {
-            if(event.getCode() == KeyCode.ENTER) {
+            String searchTerm = txtSearch.getText();
+            ObservableList<Articulo> filteredArticulos = FXCollections.observableArrayList();
+
+            for (Articulo articulo : articulos) {
+                if (articulo.getNombre().toLowerCase().contains(searchTerm.toLowerCase())) {
+                    filteredArticulos.add(articulo);
+                }
+            }
+
+            tblArticulos.setItems(filteredArticulos);
+        }
+
+        // Si txtSearch es visible, se añadirá un listener al boton btnBuscar que detecte si le damos click, y al darle click hará la misma funcion que la tecla ENTER
+
+        if(txtSearch.isVisible()) {
+            btnBuscar.setOnMouseClicked(e -> {
                 String searchTerm = txtSearch.getText();
                 ObservableList<Articulo> filteredArticulos = FXCollections.observableArrayList();
 
@@ -246,14 +256,14 @@ public class MainController implements Initializable{
                 }
 
                 tblArticulos.setItems(filteredArticulos);
-            }
+            });
         }
     }
 
     @FXML
     void initBusqueda(ActionEvent event) {
         txtSearch.setVisible(true);
-        txtSearch.setStyle("-fx-font-size: 20px; -fx-font-weight: bold"); // Hacer la fuente 20px negrita
+        txtSearch.setStyle("-fx-font-size: 20px; -fx-font-weight: bold");
         txtSearch.requestFocus();
 
     }
@@ -318,9 +328,11 @@ public class MainController implements Initializable{
 
 
     private void cargarArticulos() {
-        Articulo cafe = new Cafe("../app/assets/imgs/articulos/manzana.jpg","Cafe", 3.0);
-        Articulo bombon = new Cafe("../app/assets/imgs/articulos/manzana.jpg","Cafe Bombon", 3.0);
-        articulos.addAll(cafe, bombon);
+        Articulo solo = new Cafe("../app/assets/imgs/articulos/solo.jpg","Cafe solo", 3.0);
+        Articulo bombon = new Cafe("../app/assets/imgs/articulos/bombon.jpg","Cafe Bombon", 3.0);
+        Articulo carajillo = new Cafe("","Carajillo", 7);
+
+        articulos.addAll(solo, bombon, carajillo);
 
         // Depuración
         for (Articulo articulo : articulos) {

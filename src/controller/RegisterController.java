@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.gson.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,10 +19,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Usuario;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
 
 import static model.Usuario.users;
 
@@ -126,7 +131,6 @@ public class RegisterController implements Initializable{
                     dialog.setHeaderText("Autorización requerida");
                     dialog.setContentText("Debes introducir la contraseña del administrador para poder registrar el usuario:");
                     dialog.setResizable(false);
-                    dialog.initStyle(StageStyle.TRANSPARENT);
                     dialog.getDialogPane().setStyle("-fx-background-color: #c79f92;");
                     dialog.getDialogPane().setGraphic(new ImageView(getClass().getResource("../app/assets/imgs/auth.png").toString()));
                     TextField input = dialog.getEditor();
@@ -141,17 +145,37 @@ public class RegisterController implements Initializable{
                     if(result.isPresent()){
                         //System.out.println("Texto: " + result.get());
                         if(result.get().equals("admin")){
-                            Usuario u = new Usuario(txtUsername.getText(), pwdPassword.getText());
-                            users.add(u);
-                            //System.out.println("Registro correcto");
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                            alert.setTitle("Cup of Java");
-                            alert.setHeaderText("Registro correcto");
-                            alert.setContentText("Ahora puedes iniciar sesión");
-                            alert.showAndWait();
-                            txtUsername.clear();
-                            pwdPassword.clear();
-                            abrirLogin(event);
+                            try{
+
+                                Usuario u = new Usuario(txtUsername.getText(), pwdPassword.getText());
+                                users.add(u);
+                                FileReader reader = new FileReader("src\\app\\assets\\json\\users.json");
+                                JsonParser parser = new JsonParser();
+                                JsonElement json = parser.parse(reader);
+                                JsonArray usuarios = json.getAsJsonArray();
+
+                                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                                String nuevoUsuarioJson = gson.toJson(u);
+
+                                JsonElement nuevoUsuarioElement = new JsonParser().parse(nuevoUsuarioJson);
+                                usuarios.add(nuevoUsuarioElement);
+
+                                FileWriter writer = new FileWriter("src\\app\\assets\\json\\users.json");
+                                // Lo escribe en el archivo JSON, pero formateado
+                                gson.toJson(usuarios, writer);
+                                writer.close();
+
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                alert.setTitle("Cup of Java");
+                                alert.setHeaderText("Registro correcto");
+                                alert.setContentText("Ahora puedes iniciar sesión");
+                                alert.showAndWait();
+                                txtUsername.clear();
+                                pwdPassword.clear();
+                                abrirLogin(event);
+                            }catch(IOException e){
+                                e.printStackTrace();
+                            }
                         }else{
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Cup of Java");
