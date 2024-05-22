@@ -15,4 +15,26 @@
     -fx-background-color: #ba7861;
 }
 
+#btnVentas:hover, #btnArticulos:hover, #btnRecibos:hover {
+    -fx-background-color: #612713;
+    -fx-cursor: hand;
+}
+
+
+#txtSearch {
+    -fx-border-radius: 10px;
+    -fx-border-color: #612713;
+    -fx-border-width: 0px;
+    -fx-background-color: #fff;
+    -fx-text-fill: #782203;
+    -fx-cursor: text;
+}
+
+#txtSearch:focus {
+    -fx-border-color: #782203;
+    -fx-border-width: 3px;
+    -fx-background-color: #fff;
+    -fx-text-fill: #782203;
+    -fx-cursor: text;
+}
 

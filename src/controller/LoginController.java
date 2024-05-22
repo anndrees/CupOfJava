@@ -1,7 +1,6 @@
 package controller;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,14 +12,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.stage.StageStyle;
 import model.Usuario;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -117,13 +114,16 @@ public class LoginController implements Initializable{
                     root = loader.load();
                     MainController mainController = loader.getController();
                     mainController.setCurrentUser(user);
-                    Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    Stage mainStage = new Stage();
                     mainStage.setScene(new Scene(root));
                     mainStage.setTitle("Cup of Java");
                     mainStage.setResizable(false);
                     mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
                     mainStage.centerOnScreen();
+                    mainStage.initStyle(StageStyle.UNDECORATED);
                     mainStage.show();
+
+                    ((Node) (event.getSource())).getScene().getWindow().hide();
                 }catch(Exception ignored){}
             } else {
                 Alert alert = new Alert(Alert.AlertType.WARNING);

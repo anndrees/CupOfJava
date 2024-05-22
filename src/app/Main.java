@@ -5,7 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.awt.*;
 
@@ -17,6 +19,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+
 		Parent root = FXMLLoader.load(getClass().getResource("../view/Login.fxml"));
 		stage.setScene(new Scene(root));
 		stage.setTitle("Cup of Java - Inicio de sesión");
@@ -24,5 +27,6 @@ public class Main extends Application {
 		stage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
 		stage.show();
 		stage.centerOnScreen();
+
 	}
 }
