@@ -48,7 +48,7 @@
       </Button>
       <TableView fx:id="tblArticulos" layoutX="30.0" layoutY="81.0" prefHeight="587.0" prefWidth="840.0">
         <columns>
-          <TableColumn fx:id="colFoto" prefWidth="75.0"/>
+          <TableColumn fx:id="colFoto" prefWidth="75.0" />
           <TableColumn fx:id="colNombre" prefWidth="683.0" resizable="false" sortable="false" text="Articulo" />
             <TableColumn fx:id="colPrecio" minWidth="0.0" prefWidth="82.0" text="Precio" />
         </columns>
@@ -85,7 +85,7 @@
       <ComboBox fx:id="cboxTipoPedido" layoutX="880.0" layoutY="81.0" prefHeight="26.0" prefWidth="290.0" />
       <TextField fx:id="txtSearch" layoutX="30.0" layoutY="24.0" onKeyPressed="#buscar" prefHeight="51.0" prefWidth="790.0" visible="false" />
       <Pane fx:id="allPane" layoutX="-10.0" layoutY="-9.0" mouseTransparent="true" onMouseClicked="#toggleHamburgerMenu" opacity="0.5" prefHeight="718.0" prefWidth="1221.0" style="-fx-background-color: BLACK;" visible="false" />
-      <Pane fx:id="allPane1" layoutX="-12.0" layoutY="-9.0" mouseTransparent="true" onMouseClicked="#closeVerticalMenu" prefHeight="718.0" prefWidth="1221.0" />
+      <Pane fx:id="allPane1" layoutX="-12.0" layoutY="-9.0" mouseTransparent="true" onMouseClicked="#closeVerticalMenu" prefHeight="718.0" prefWidth="1221.0" visible="false" />
       <Pane fx:id="verticalPane" layoutX="1015.0" layoutY="20.0" mouseTransparent="true" prefHeight="140.0" prefWidth="160.0" style="-fx-background-color: WHITE; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-border-color: #612713; -fx-border-width: 1px;" visible="false">
          <children>
             <Button fx:id="btnMoveTicket" disable="true" layoutX="1.0" layoutY="50.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#moveTicket" prefHeight="40.0" prefWidth="158.0" text="Mover ticket" />

@@ -307,7 +307,7 @@ public class MainController implements Initializable{
         tblArticulos.setItems(articulos);
 
         // Cargar los artículos y sus precios en la tabla
-        //cargarArticulos();
+        cargarArticulos();
 
         // Depuración
         System.out.println("Artículos cargados: " + articulos.size());
@@ -372,7 +372,7 @@ public class MainController implements Initializable{
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Cup of Java - Cerrar sesión");
         alert.setHeaderText("Estás a punto de cerrar tu sesión");
-        alert.setContentText("¿Seguro que quieres cerrar la sesión?");
+        alert.setContentText("¿Seguro que quieres continuar?");
         alert.showAndWait();
         if (alert.getResult() == ButtonType.OK) {
             try {
@@ -394,7 +394,6 @@ public class MainController implements Initializable{
         cboxCatArticulos.setFocusTraversable(false);
         cboxTipoPedido.setFocusTraversable(false);
         lblTicket.setFocusTraversable(false);
-        linkCerrarSesion.setFocusTraversable(false);
         listTicket.setFocusTraversable(false);
         tblArticulos.setFocusTraversable(false);
         txtSearch.setVisible(false);
