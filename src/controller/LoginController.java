@@ -120,7 +120,7 @@ public class LoginController implements Initializable{
                     mainStage.setResizable(false);
                     mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
                     mainStage.centerOnScreen();
-                    mainStage.initStyle(StageStyle.UNDECORATED);
+                    //mainStage.initStyle(StageStyle.UNDECORATED);
                     mainStage.show();
 
                     ((Node) (event.getSource())).getScene().getWindow().hide();

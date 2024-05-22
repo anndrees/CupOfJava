@@ -27,12 +27,16 @@ import model.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable{
 
     @FXML
     private Pane allPane;
+
+    @FXML
+    private Pane allPane1; // este es el panel que se activaal pulsar el boton del menu vertical
 
     @FXML
     private AnchorPane anchorMain;
@@ -51,6 +55,15 @@ public class MainController implements Initializable{
 
     @FXML
     private Button btnVerticalMenu;
+
+    @FXML
+    private Button btnClearTicket;
+
+    @FXML
+    private Button btnCloseApp;
+
+    @FXML
+    private Button btnMoveTicket;
 
     @FXML
     private ComboBox<TipoPedido> cboxTipoPedido;
@@ -84,6 +97,8 @@ public class MainController implements Initializable{
 
     private ObservableList<Articulo> articulos;
 
+    @FXML
+    private Pane verticalPane;
 
     @FXML
     private TextField txtSearch;
@@ -98,7 +113,7 @@ public class MainController implements Initializable{
     private Button btnRecibos;
 
     private Usuario currentUser;
-    private boolean menuVisible = false;
+    private boolean hamburgerMenuVisible = false;
 
 
     @FXML
@@ -107,7 +122,7 @@ public class MainController implements Initializable{
         allPane.setVisible(true);
         TranslateTransition hamburgerTransition = new TranslateTransition(Duration.millis(300), hamburgerPane);
         FadeTransition allPaneTransition = new FadeTransition(Duration.millis(300), allPane);
-        if (menuVisible) {
+        if (hamburgerMenuVisible) {
             hamburgerPane.setMouseTransparent(true);
             allPaneTransition.setFromValue(0.5);
             allPaneTransition.setToValue(0.0);
@@ -122,7 +137,7 @@ public class MainController implements Initializable{
         }
         allPaneTransition.play();
         hamburgerTransition.play();
-        menuVisible = !menuVisible;
+        hamburgerMenuVisible = !hamburgerMenuVisible;
     }
 
     @FXML
@@ -169,6 +184,48 @@ public class MainController implements Initializable{
     }
 
     @FXML
+    void openVerticalMenu(ActionEvent event) { //Abre el vertical menu con una transicion que dure 300 milisegundos y establece el valor de opacidad de 0.0 a 1.0
+        verticalPane.setMouseTransparent(false);
+        allPane1.setMouseTransparent(false);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(150), verticalPane);
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(1.0);
+        fadeTransition.play();
+    }
+
+    @FXML
+    void closeVerticalMenu(MouseEvent event) {
+        verticalPane.setMouseTransparent(true);
+        allPane1.setMouseTransparent(true);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(150), verticalPane);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.0);
+        fadeTransition.play();
+    }
+
+    @FXML
+    void clearTicket(ActionEvent event) {
+
+    }
+
+    @FXML
+    void moveTicket(ActionEvent event) {
+
+    }
+
+    @FXML
+    void closeApp(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar");
+        alert.setHeaderText("Estás a punto de cerrar la aplicación");
+        alert.setContentText("¿Estás seguro?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == ButtonType.OK) {
+            System.exit(0);
+        }
+    }
+
+    @FXML
     void buscar(KeyEvent event) {
         // Añadir un listener que detecte si va cambiando el texto de txtSearch
 
@@ -196,18 +253,25 @@ public class MainController implements Initializable{
     @FXML
     void initBusqueda(ActionEvent event) {
         txtSearch.setVisible(true);
+        txtSearch.setStyle("-fx-font-size: 20px; -fx-font-weight: bold"); // Hacer la fuente 20px negrita
         txtSearch.requestFocus();
+
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
         unfocus();
-
         cboxTipoPedido.getItems().addAll(TipoPedido.values());
         cboxCatArticulos.getItems().addAll(Categorias.values());
         cboxTipoPedido.setValue(TipoPedido.COMER_AQUI);
         cboxCatArticulos.setValue(Categorias.TODOS);
         hamburgerPane.setTranslateX(-205);
+        verticalPane.setVisible(true);
+        verticalPane.setOpacity(0.0);
+        verticalPane.setMouseTransparent(true);
+        allPane1.setVisible(true);
+        allPane1.setMouseTransparent(true);
+
 
         colFoto.setCellValueFactory(new PropertyValueFactory<>("foto"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -243,7 +307,7 @@ public class MainController implements Initializable{
         tblArticulos.setItems(articulos);
 
         // Cargar los artículos y sus precios en la tabla
-        cargarArticulos();
+        //cargarArticulos();
 
         // Depuración
         System.out.println("Artículos cargados: " + articulos.size());
@@ -252,9 +316,8 @@ public class MainController implements Initializable{
         }
     }
 
+
     private void cargarArticulos() {
-        // Aquí puedes cargar los artículos y sus precios de alguna fuente de datos
-        // o de alguna otra parte de tu aplicación
         Articulo cafe = new Cafe("../app/assets/imgs/articulos/manzana.jpg","Cafe", 3.0);
         Articulo bombon = new Cafe("../app/assets/imgs/articulos/manzana.jpg","Cafe Bombon", 3.0);
         articulos.addAll(cafe, bombon);
