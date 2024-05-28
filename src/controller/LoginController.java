@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Usuario;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -112,8 +113,10 @@ public class LoginController implements Initializable{
                     user = u;
                 }
             }
+            String rutaProyecto = System.getProperty("user.dir");
+            String rutaJson = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "users.json";
             try{
-                FileReader reader = new FileReader("src\\app\\assets\\json\\users.json");
+                FileReader reader = new FileReader(rutaJson);
                 JsonParser parser = new JsonParser();
                 JsonElement json = parser.parse(reader);
                 JsonArray users = json.getAsJsonArray();

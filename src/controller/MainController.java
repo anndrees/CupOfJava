@@ -276,6 +276,10 @@ public class MainController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Gson gson = new Gson();
+
+        String rutaProyecto = System.getProperty("user.dir");
+        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         unfocus();
         cboxTipoPedido.getItems().addAll(TipoPedido.values());
         cboxCatArticulos.getItems().addAll(Categorias.values());
@@ -325,64 +329,100 @@ public class MainController implements Initializable{
         articulos.addAll(solo, bombon, carajillo, manzana);
 
 
-        File file = new File("../app/assets/json/coffes.json");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ignored) {
+        File file = new File(rutaJsonCoffes);
+		FileWriter writer = null;
+		try{
+			writer = new FileWriter(file);
+
+            JsonArray jsonArray = new JsonArray();
+            for (Articulo articulo : articulos) {
+                if(articulo.getClass().getSimpleName().equals("Cafe")){
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("foto", articulo.getFoto());
+                    jsonObject.addProperty("nombre", articulo.getNombre());
+                    jsonObject.addProperty("precio", articulo.getPrecio());
+                    jsonArray.add(jsonObject);
+                }
+
             }
-        }
-
-        try (FileWriter writer = new FileWriter(file)) {
-            Gson gson = new Gson();
-            gson.toJson(articulos, writer);
-        } catch (IOException ignored) {
-        }
-
-        cargarArticulos();
+            //Lo escribe en el archivo, pero formateado
+            gson.toJson(jsonArray, writer);
+            writer.close();
+		}catch(IOException e){
+			throw new RuntimeException(e);
+		}
+		cargarArticulos();
 
         System.out.println("Artículos cargados: " + articulos.size());
     }
 
     private void cargarArticulos() {
         Gson gson = new Gson();
+        String rutaProyecto = System.getProperty("user.dir");
+        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
+        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
         try {
-            File file = new File("app/assets/json/coffes.json");
-            if (!file.exists()) {
-                System.out.println("El archivo coffes.json no existe en la ruta especificada.");
-                return;
+            File file = new File(rutaJsonCoffes);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("foto") && jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String imagePath = jsonObject.get("foto").getAsString();
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Cafe(imagePath, nombre, precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'foto', 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                    System.out.println("debug");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("El archivo coffes.json no existe o está vacío en la ruta especificada.");
             }
-            FileReader reader = new FileReader(file);
-            JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-            JsonArray jsonArray = jsonElement.getAsJsonArray();
-            for (JsonElement element : jsonArray) {
-                JsonObject jsonObject = element.getAsJsonObject();
-                String nombre = jsonObject.get("nombre").getAsString();
-                String foto = jsonObject.get("fotos").getAsString();
-                double precio = jsonObject.get("precio").getAsDouble();
-                articulos.add(new Cafe(foto, nombre, precio));
-            }
-        } catch (IOException ignored) {
+        } catch (Exception e) {
         }
 
         // Cargar el JSON con las frutas
         try {
-            File file = new File("app/assets/json/fruits.json");
-            if (!file.exists()) {
-                System.out.println("El archivo fruits.json no existe en la ruta especificada.");
-                return;
+            File file = new File(rutaJsonFruits);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("foto") && jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String imagePath = jsonObject.get("foto").getAsString();
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Fruta(imagePath, nombre, precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'foto', 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("El archivo fruits.json no existe o está vacío en la ruta especificada.");
             }
-            FileReader reader = new FileReader(file);
-            JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-            JsonArray jsonArray = jsonElement.getAsJsonArray();
-            for (JsonElement element : jsonArray) {
-                JsonObject jsonObject = element.getAsJsonObject();
-                String nombre = jsonObject.get("nombre").getAsString();
-                String foto = jsonObject.get("fotos").getAsString();
-                double precio = jsonObject.get("precio").getAsDouble();
-                articulos.add(new Fruta(foto, nombre, precio));
-            }
-        } catch (IOException ignored) {
+        } catch (Exception e) {
         }
 
         TreeSet<Articulo> articulosSet = new TreeSet<>(new Comparator<Articulo>() {
