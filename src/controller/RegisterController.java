@@ -149,7 +149,7 @@ public class RegisterController implements Initializable{
 
                                 Usuario u = new Usuario(txtUsername.getText(), pwdPassword.getText());
                                 users.add(u);
-                                FileReader reader = new FileReader("src\\app\\assets\\json\\users.json");
+                                FileReader reader = new FileReader("src/app/assets/json/users.json");
                                 JsonParser parser = new JsonParser();
                                 JsonElement json = parser.parse(reader);
                                 JsonArray usuarios = json.getAsJsonArray();
@@ -160,7 +160,7 @@ public class RegisterController implements Initializable{
                                 JsonElement nuevoUsuarioElement = new JsonParser().parse(nuevoUsuarioJson);
                                 usuarios.add(nuevoUsuarioElement);
 
-                                FileWriter writer = new FileWriter("src\\app\\assets\\json\\users.json");
+                                FileWriter writer = new FileWriter("src/app/assets/json/users.json");
                                 // Lo escribe en el archivo JSON, pero formateado
                                 gson.toJson(usuarios, writer);
                                 writer.close();

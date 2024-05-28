@@ -25,10 +25,17 @@ import javafx.util.Duration;
 import javafx.scene.image.ImageView;
 import model.*;
 
+import com.google.gson.*;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.TreeSet;
 
 public class MainController implements Initializable{
 
@@ -242,7 +249,6 @@ public class MainController implements Initializable{
             tblArticulos.setItems(filteredArticulos);
         }
 
-        // Si txtSearch es visible, se añadirá un listener al boton btnBuscar que detecte si le damos click, y al darle click hará la misma funcion que la tecla ENTER
 
         if(txtSearch.isVisible()) {
             btnBuscar.setOnMouseClicked(e -> {
@@ -269,7 +275,7 @@ public class MainController implements Initializable{
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle){
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         unfocus();
         cboxTipoPedido.getItems().addAll(TipoPedido.values());
         cboxCatArticulos.getItems().addAll(Categorias.values());
@@ -282,64 +288,119 @@ public class MainController implements Initializable{
         allPane1.setVisible(true);
         allPane1.setMouseTransparent(true);
 
-
         colFoto.setCellValueFactory(new PropertyValueFactory<>("foto"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colFoto.setCellFactory(column -> {
-            return new TableCell<Articulo, String>() {
-                private final ImageView imageView = new ImageView();
 
-                {
-                    // Configura el tamaño de la imagen, no se debe deformar si las proporciones no son correctas
-                    imageView.setPreserveRatio(true);
-                    imageView.setFitWidth(50);
-                    imageView.setFitHeight(50);
-                }
+        colFoto.setCellFactory(column -> new TableCell<Articulo, String>() {
+            private final ImageView imageView = new ImageView();
 
-                @Override
-                protected void updateItem(String imagePath, boolean empty) {
-                    super.updateItem(imagePath, empty);
-                    if (empty || imagePath == null) {
-                        // Si la celda está vacía, establece una imagen vacía
-                        setGraphic(null);
-                    } else {
-                        // Carga la imagen desde la ruta proporcionada
-                        Image image = new Image(getClass().getResourceAsStream(imagePath));
-                        imageView.setImage(image);
-                        setGraphic(imageView);
-                    }
+            {
+                imageView.setPreserveRatio(true);
+                imageView.setFitWidth(50);
+                imageView.setFitHeight(50);
+            }
+
+            @Override
+            protected void updateItem(String imagePath, boolean empty) {
+                super.updateItem(imagePath, empty);
+                if (empty || imagePath == null) {
+                    setGraphic(null);
+                } else {
+                    Image image = new Image(getClass().getResourceAsStream(imagePath));
+                    imageView.setImage(image);
+                    setGraphic(imageView);
                 }
-            };
+            }
         });
 
         articulos = FXCollections.observableArrayList();
         tblArticulos.setItems(articulos);
 
-        // Cargar los artículos y sus precios en la tabla
+        // Crear los artículos en los ficheros json con FileWriter y Gson
+        Articulo solo = new Cafe("../app/assets/imgs/articulos/solo.jpg", "Cafe solo", 3.0);
+        Articulo bombon = new Cafe("../app/assets/imgs/articulos/bombon.jpg", "Cafe Bombon", 3);
+        Articulo carajillo = new Cafe("", "Carajillo", 7.5);
+        Articulo manzana = new Fruta("../app/assets/imgs/articulos/manzana.jpg", "Manzana", 2.5);
+        articulos.addAll(solo, bombon, carajillo, manzana);
+
+
+        File file = new File("../app/assets/json/coffes.json");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ignored) {
+            }
+        }
+
+        try (FileWriter writer = new FileWriter(file)) {
+            Gson gson = new Gson();
+            gson.toJson(articulos, writer);
+        } catch (IOException ignored) {
+        }
+
         cargarArticulos();
 
-        // Depuración
         System.out.println("Artículos cargados: " + articulos.size());
-        for (Articulo articulo : articulos) {
-            System.out.println(articulo.getNombre());
-        }
     }
 
-
     private void cargarArticulos() {
-        Articulo solo = new Cafe("../app/assets/imgs/articulos/solo.jpg","Cafe solo", 3.0);
-        Articulo bombon = new Cafe("../app/assets/imgs/articulos/bombon.jpg","Cafe Bombon", 3.0);
-        Articulo carajillo = new Cafe("","Carajillo", 7);
+        Gson gson = new Gson();
+        try {
+            File file = new File("app/assets/json/coffes.json");
+            if (!file.exists()) {
+                System.out.println("El archivo coffes.json no existe en la ruta especificada.");
+                return;
+            }
+            FileReader reader = new FileReader(file);
+            JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            for (JsonElement element : jsonArray) {
+                JsonObject jsonObject = element.getAsJsonObject();
+                String nombre = jsonObject.get("nombre").getAsString();
+                String foto = jsonObject.get("fotos").getAsString();
+                double precio = jsonObject.get("precio").getAsDouble();
+                articulos.add(new Cafe(foto, nombre, precio));
+            }
+        } catch (IOException ignored) {
+        }
 
-        articulos.addAll(solo, bombon, carajillo);
+        // Cargar el JSON con las frutas
+        try {
+            File file = new File("app/assets/json/fruits.json");
+            if (!file.exists()) {
+                System.out.println("El archivo fruits.json no existe en la ruta especificada.");
+                return;
+            }
+            FileReader reader = new FileReader(file);
+            JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+            JsonArray jsonArray = jsonElement.getAsJsonArray();
+            for (JsonElement element : jsonArray) {
+                JsonObject jsonObject = element.getAsJsonObject();
+                String nombre = jsonObject.get("nombre").getAsString();
+                String foto = jsonObject.get("fotos").getAsString();
+                double precio = jsonObject.get("precio").getAsDouble();
+                articulos.add(new Fruta(foto, nombre, precio));
+            }
+        } catch (IOException ignored) {
+        }
+
+        TreeSet<Articulo> articulosSet = new TreeSet<>(new Comparator<Articulo>() {
+            @Override
+            public int compare(Articulo articulo1, Articulo articulo2) {
+                return articulo1.getNombre().compareTo(articulo2.getNombre());
+            }
+        });
+
+        articulosSet.addAll(articulos);
+        articulos.clear();
+        articulos.addAll(articulosSet);
 
         // Depuración
         for (Articulo articulo : articulos) {
             System.out.println("Foto: " + articulo.getFoto() + ", Nombre: " + articulo.getNombre() + ", Precio: " + articulo.getPrecio());
         }
     }
-
 
 
     public void setCurrentUser(Usuario currentUser) {
