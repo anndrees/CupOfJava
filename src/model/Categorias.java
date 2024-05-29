@@ -5,6 +5,7 @@ public enum Categorias{
 	REFRESCOS("Refrescos"),
 	POSTRES("Postres"),
 	CAFES("Cafés"),
+	FRUTAS("Frutas"),
 	OTROS("Otros");
 
 	private final String textoFormateado;

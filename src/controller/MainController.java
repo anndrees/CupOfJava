@@ -1,7 +1,10 @@
 package controller;
 
+import com.sun.javafx.scene.web.Debugger;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +22,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -85,13 +89,16 @@ public class MainController implements Initializable{
     private Label lblTicket;
 
     @FXML
+    private Text txtUsuario;
+
+    @FXML
     private ListView<?> listTicket;
 
     @FXML
     private TableView<Articulo> tblArticulos;
 
     @FXML
-    private TableColumn<Articulo, String> colFoto;
+    private TableColumn<Articulo, Image> colFoto;
 
     @FXML
     private TableColumn<Articulo, String> colNombre;
@@ -276,7 +283,7 @@ public class MainController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
@@ -296,7 +303,22 @@ public class MainController implements Initializable{
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
 
-        colFoto.setCellFactory(column -> new TableCell<Articulo, String>() {
+
+        cboxCatArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == Categorias.TODOS) {
+                tblArticulos.setItems(articulos);
+            } else {
+                ObservableList<Articulo> filteredArticulos = FXCollections.observableArrayList();
+                for (Articulo articulo : articulos) {
+                    if (articulo.getCategoria().equals(newValue.toString())) {
+                        filteredArticulos.add(articulo);
+                    }
+                }
+                tblArticulos.setItems(filteredArticulos);
+            }
+        });
+
+        colFoto.setCellFactory(column -> new TableCell<Articulo, Image>() {
             private final ImageView imageView = new ImageView();
 
             {
@@ -306,13 +328,12 @@ public class MainController implements Initializable{
             }
 
             @Override
-            protected void updateItem(String imagePath, boolean empty) {
-                super.updateItem(imagePath, empty);
-                if (empty || imagePath == null) {
+            protected void updateItem(Image item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
                     setGraphic(null);
                 } else {
-                    Image image = new Image(getClass().getResourceAsStream(imagePath));
-                    imageView.setImage(image);
+                    imageView.setImage(item);
                     setGraphic(imageView);
                 }
             }
@@ -320,12 +341,10 @@ public class MainController implements Initializable{
 
         articulos = FXCollections.observableArrayList();
         tblArticulos.setItems(articulos);
-
-        // Crear los artículos en los ficheros json con FileWriter y Gson
-        Articulo solo = new Cafe("../app/assets/imgs/articulos/solo.jpg", "Cafe solo", 3.0);
-        Articulo bombon = new Cafe("../app/assets/imgs/articulos/bombon.jpg", "Cafe Bombon", 3);
-        Articulo carajillo = new Cafe("", "Carajillo", 7.5);
-        Articulo manzana = new Fruta("../app/assets/imgs/articulos/manzana.jpg", "Manzana", 2.5);
+        Articulo solo = new Cafe(new Image(getClass().getResourceAsStream("../app/assets/imgs/articulos/solo.jpg")), "Cafe solo", 3.0);
+        Articulo bombon = new Cafe(new Image(getClass().getResourceAsStream("../app/assets/imgs/articulos/bombon.jpg")), "Cafe Bombon", 3);
+        Articulo carajillo = new Cafe(new Image(getClass().getResourceAsStream("")), "Carajillo", 7.5);
+        Articulo manzana = new Fruta(new Image(getClass().getResourceAsStream("../app/assets/imgs/articulos/manzana.jpg")), "Manzana", 2.5);
         articulos.addAll(solo, bombon, carajillo, manzana);
 
 
@@ -338,29 +357,30 @@ public class MainController implements Initializable{
             for (Articulo articulo : articulos) {
                 if(articulo.getClass().getSimpleName().equals("Cafe")){
                     JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("foto", articulo.getFoto());
+                    jsonObject.addProperty("foto", articulo.getFoto().getUrl());
                     jsonObject.addProperty("nombre", articulo.getNombre());
                     jsonObject.addProperty("precio", articulo.getPrecio());
                     jsonArray.add(jsonObject);
                 }
 
             }
-            //Lo escribe en el archivo, pero formateado
             gson.toJson(jsonArray, writer);
             writer.close();
 		}catch(IOException e){
 			throw new RuntimeException(e);
 		}
+
 		cargarArticulos();
 
         System.out.println("Artículos cargados: " + articulos.size());
     }
 
     private void cargarArticulos() {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+
         try {
             File file = new File(rutaJsonCoffes);
             if (file.exists() && file.length() > 0) {
@@ -375,7 +395,7 @@ public class MainController implements Initializable{
                             String imagePath = jsonObject.get("foto").getAsString();
                             String nombre = jsonObject.get("nombre").getAsString();
                             double precio = jsonObject.get("precio").getAsDouble();
-                            Articulo articulo = new Cafe(imagePath, nombre, precio);
+                            Articulo articulo = new Cafe(new Image(imagePath), nombre, precio);
                             articulos.add(articulo);
                         } else {
                             System.out.println("El objeto JSON no tiene los atributos 'foto', 'nombre' y 'precio'.");
@@ -408,7 +428,7 @@ public class MainController implements Initializable{
                             String imagePath = jsonObject.get("foto").getAsString();
                             String nombre = jsonObject.get("nombre").getAsString();
                             double precio = jsonObject.get("precio").getAsDouble();
-                            Articulo articulo = new Fruta(imagePath, nombre, precio);
+                            Articulo articulo = new Fruta(new Image(imagePath), nombre, precio);
                             articulos.add(articulo);
                         } else {
                             System.out.println("El objeto JSON no tiene los atributos 'foto', 'nombre' y 'precio'.");
@@ -438,13 +458,16 @@ public class MainController implements Initializable{
 
         // Depuración
         for (Articulo articulo : articulos) {
-            System.out.println("Foto: " + articulo.getFoto() + ", Nombre: " + articulo.getNombre() + ", Precio: " + articulo.getPrecio());
+            System.out.println("foto: " + articulo.getFoto() + ", nombre: " + articulo.getNombre());
         }
     }
 
 
     public void setCurrentUser(Usuario currentUser) {
         this.currentUser = currentUser;
+
+        txtUsuario.setText("Usuario: " + currentUser.getUsername());
+
     }
 
 

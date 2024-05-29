@@ -1,24 +1,29 @@
 package model;
 
+import javafx.scene.image.Image;
+
 import java.util.Objects;
 
 public abstract class Articulo{
 
-	public String foto;
+	public Image foto;
 	public String nombre;
 	public double precio;
+	public String categoria;
 
-	public Articulo(String foto, String nombre, double precio){
+	public Articulo(Image foto, String nombre, double precio){
 		this.foto = foto;
 		this.nombre = nombre;
 		this.precio = precio;
 	}
 
 
-	public abstract String getFoto();
+	public abstract Image getFoto();
 
 	public abstract String getNombre();
 	public abstract double getPrecio();
+
+	public abstract String getCategoria();
 
 	@Override
 	public boolean equals(Object o){
