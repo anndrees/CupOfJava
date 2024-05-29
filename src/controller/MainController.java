@@ -1,10 +1,7 @@
 package controller;
 
-import com.sun.javafx.scene.web.Debugger;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,10 +33,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.TreeSet;
+import java.util.*;
 
 public class MainController implements Initializable{
 
@@ -92,19 +86,25 @@ public class MainController implements Initializable{
     private Text txtUsuario;
 
     @FXML
-    private ListView<?> listTicket;
-
-    @FXML
     private TableView<Articulo> tblArticulos;
-
-    @FXML
-    private TableColumn<Articulo, Image> colFoto;
 
     @FXML
     private TableColumn<Articulo, String> colNombre;
 
     @FXML
     private TableColumn<Articulo, Double> colPrecio;
+
+    @FXML
+    private TableColumn<?, ?> colArticuloInTicket;
+
+    @FXML
+    private TableColumn<?, ?> colPrecioInTicket;
+
+    @FXML
+    private TableColumn<?, ?> colQtyInTicket;
+
+    @FXML
+    private TableView<?> tblTicket;
 
     private ObservableList<Articulo> articulos;
 
@@ -239,11 +239,14 @@ public class MainController implements Initializable{
     @FXML
     void buscar(KeyEvent event) {
 
-        if(event.getCode() == KeyCode.ESCAPE) {
+        if(event.getCode() == KeyCode.ESCAPE || !txtSearch.isFocused()) {
             txtSearch.setVisible(false);
         }
 
         if(event.getCode() == KeyCode.ENTER) {
+            cboxCatArticulos.setValue(Categorias.TODOS);
+
+
             String searchTerm = txtSearch.getText();
             ObservableList<Articulo> filteredArticulos = FXCollections.observableArrayList();
 
@@ -254,11 +257,17 @@ public class MainController implements Initializable{
             }
 
             tblArticulos.setItems(filteredArticulos);
+            if(txtSearch.isVisible()){
+                txtSearch.setVisible(false);
+            }
+            cboxCatArticulos.setValue(Categorias.TODOS);
         }
 
 
         if(txtSearch.isVisible()) {
             btnBuscar.setOnMouseClicked(e -> {
+                cboxCatArticulos.setValue(Categorias.TODOS);
+
                 String searchTerm = txtSearch.getText();
                 ObservableList<Articulo> filteredArticulos = FXCollections.observableArrayList();
 
@@ -269,6 +278,8 @@ public class MainController implements Initializable{
                 }
 
                 tblArticulos.setItems(filteredArticulos);
+
+
             });
         }
     }
@@ -287,6 +298,7 @@ public class MainController implements Initializable{
 
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
+        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
         unfocus();
         cboxTipoPedido.getItems().addAll(TipoPedido.values());
         cboxCatArticulos.getItems().addAll(Categorias.values());
@@ -299,7 +311,6 @@ public class MainController implements Initializable{
         allPane1.setVisible(true);
         allPane1.setMouseTransparent(true);
 
-        colFoto.setCellValueFactory(new PropertyValueFactory<>("foto"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
 
@@ -318,57 +329,56 @@ public class MainController implements Initializable{
             }
         });
 
-        colFoto.setCellFactory(column -> new TableCell<Articulo, Image>() {
-            private final ImageView imageView = new ImageView();
-
-            {
-                imageView.setPreserveRatio(true);
-                imageView.setFitWidth(50);
-                imageView.setFitHeight(50);
-            }
-
-            @Override
-            protected void updateItem(Image item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    imageView.setImage(item);
-                    setGraphic(imageView);
-                }
-            }
-        });
 
         articulos = FXCollections.observableArrayList();
         tblArticulos.setItems(articulos);
-        Articulo solo = new Cafe(new Image(getClass().getResourceAsStream("../app/assets/imgs/articulos/solo.jpg")), "Cafe solo", 3.0);
-        Articulo bombon = new Cafe(new Image(getClass().getResourceAsStream("../app/assets/imgs/articulos/bombon.jpg")), "Cafe Bombon", 3);
-        Articulo carajillo = new Cafe(new Image(getClass().getResourceAsStream("")), "Carajillo", 7.5);
-        Articulo manzana = new Fruta(new Image(getClass().getResourceAsStream("../app/assets/imgs/articulos/manzana.jpg")), "Manzana", 2.5);
+        Articulo solo = new Cafe("Solo", 1.5);
+        Articulo bombon = new Cafe("Bombon", 3.0);
+        Articulo carajillo = new Cafe("Carajillo", 3.5);
+        Articulo manzana = new Fruta("Manzana", 1.0);
         articulos.addAll(solo, bombon, carajillo, manzana);
 
 
-        File file = new File(rutaJsonCoffes);
-		FileWriter writer = null;
-		try{
-			writer = new FileWriter(file);
+        File fileCoffee = new File(rutaJsonCoffes);
+        File fileFruits = new File(rutaJsonFruits);
+
+        try{
+            FileWriter writer = null;
+            writer = new FileWriter(fileCoffee);
 
             JsonArray jsonArray = new JsonArray();
             for (Articulo articulo : articulos) {
                 if(articulo.getClass().getSimpleName().equals("Cafe")){
                     JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("foto", articulo.getFoto().getUrl());
                     jsonObject.addProperty("nombre", articulo.getNombre());
                     jsonObject.addProperty("precio", articulo.getPrecio());
                     jsonArray.add(jsonObject);
                 }
-
             }
             gson.toJson(jsonArray, writer);
             writer.close();
 		}catch(IOException e){
 			throw new RuntimeException(e);
 		}
+
+        try{
+            FileWriter writer = null;
+            writer = new FileWriter(fileFruits);
+
+            JsonArray jsonArray = new JsonArray();
+            for (Articulo articulo : articulos) {
+                if(articulo.getClass().getSimpleName().equals("Fruta")){
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("nombre", articulo.getNombre());
+                    jsonObject.addProperty("precio", articulo.getPrecio());
+                    jsonArray.add(jsonObject);
+                }
+            }
+            gson.toJson(jsonArray, writer);
+            writer.close();
+        }catch(IOException e){
+            throw new RuntimeException(e);
+        }
 
 		cargarArticulos();
 
@@ -391,29 +401,26 @@ public class MainController implements Initializable{
 
                     for (JsonElement jsonElement1 : jsonArray) {
                         JsonObject jsonObject = jsonElement1.getAsJsonObject();
-                        if (jsonObject.has("foto") && jsonObject.has("nombre") && jsonObject.has("precio")) {
-                            String imagePath = jsonObject.get("foto").getAsString();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
                             String nombre = jsonObject.get("nombre").getAsString();
                             double precio = jsonObject.get("precio").getAsDouble();
-                            Articulo articulo = new Cafe(new Image(imagePath), nombre, precio);
+                            Articulo articulo = new Cafe(nombre, precio);
                             articulos.add(articulo);
                         } else {
-                            System.out.println("El objeto JSON no tiene los atributos 'foto', 'nombre' y 'precio'.");
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
                         }
                     }
 
                     tblArticulos.setItems(articulos);
-                    System.out.println("debug");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
                 System.out.println("El archivo coffes.json no existe o está vacío en la ruta especificada.");
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
-        // Cargar el JSON con las frutas
         try {
             File file = new File(rutaJsonFruits);
             if (file.exists() && file.length() > 0) {
@@ -424,14 +431,13 @@ public class MainController implements Initializable{
 
                     for (JsonElement jsonElement1 : jsonArray) {
                         JsonObject jsonObject = jsonElement1.getAsJsonObject();
-                        if (jsonObject.has("foto") && jsonObject.has("nombre") && jsonObject.has("precio")) {
-                            String imagePath = jsonObject.get("foto").getAsString();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
                             String nombre = jsonObject.get("nombre").getAsString();
                             double precio = jsonObject.get("precio").getAsDouble();
-                            Articulo articulo = new Fruta(new Image(imagePath), nombre, precio);
+                            Articulo articulo = new Fruta(nombre, precio);
                             articulos.add(articulo);
                         } else {
-                            System.out.println("El objeto JSON no tiene los atributos 'foto', 'nombre' y 'precio'.");
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
                         }
                     }
 
@@ -442,15 +448,11 @@ public class MainController implements Initializable{
             } else {
                 System.out.println("El archivo fruits.json no existe o está vacío en la ruta especificada.");
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
-        TreeSet<Articulo> articulosSet = new TreeSet<>(new Comparator<Articulo>() {
-            @Override
-            public int compare(Articulo articulo1, Articulo articulo2) {
-                return articulo1.getNombre().compareTo(articulo2.getNombre());
-            }
-        });
+        Set<Articulo> articulosSet = new TreeSet<>(Comparator.comparing(Articulo::getNombre));
+
 
         articulosSet.addAll(articulos);
         articulos.clear();
@@ -458,7 +460,7 @@ public class MainController implements Initializable{
 
         // Depuración
         for (Articulo articulo : articulos) {
-            System.out.println("foto: " + articulo.getFoto() + ", nombre: " + articulo.getNombre());
+            System.out.println("nombre: " + articulo.getNombre() + ", precio: " + articulo.getPrecio());
         }
     }
 
@@ -466,7 +468,7 @@ public class MainController implements Initializable{
     public void setCurrentUser(Usuario currentUser) {
         this.currentUser = currentUser;
 
-        txtUsuario.setText("Usuario: " + currentUser.getUsername());
+        txtUsuario.setText("usuario: " + currentUser.getUsername());
 
     }
 
@@ -530,7 +532,7 @@ public class MainController implements Initializable{
         cboxCatArticulos.setFocusTraversable(false);
         cboxTipoPedido.setFocusTraversable(false);
         lblTicket.setFocusTraversable(false);
-        listTicket.setFocusTraversable(false);
+        tblTicket.setFocusTraversable(false);
         tblArticulos.setFocusTraversable(false);
         txtSearch.setVisible(false);
         lblTicket.getParent().requestFocus();

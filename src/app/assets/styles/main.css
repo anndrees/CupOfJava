@@ -15,11 +15,31 @@
     -fx-background-color: #ba7861;
 }
 
-#btnVentas:hover, #btnArticulos:hover, #btnRecibos:hover {
-    -fx-background-color: #612713;
+#btnVentas, #btnArticulos, #btnRecibos, #btnCerrarSesion, #btnCloseApp, #btnClearTicket, #btnMoveTicket {
+    -fx-background-color: WHITE;
+    -fx-text-fill:  #782203;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+}
+
+#btnClearTicket, #btnMoveTicket {
+    -fx-text-fill: #000;
+}
+
+#btnCerrarSesion, #btnCloseApp {
+    -fx-text-fill: #e10000;
+}
+
+#btnVentas:hover, #btnArticulos:hover, #btnRecibos:hover, #btnCerrarSesion:hover,
+#btnCloseApp:hover, #btnClearTicket:hover, #btnMoveTicket:hover {
+    -fx-background-color: #ededed;
     -fx-cursor: hand;
 }
 
+#btnVentas:pressed, #btnArticulos:pressed, #btnRecibos:pressed, #btnCerrarSesion:pressed,
+#btnCloseApp:pressed, #btnClearTicket:pressed, #btnMoveTicket:pressed {
+    -fx-background-color: #d6d6d6;
+}
 
 #txtSearch {
     -fx-border-radius: 10px;
@@ -36,5 +56,13 @@
     -fx-background-color: #fff;
     -fx-text-fill: #782203;
     -fx-cursor: text;
+}
+
+#verticalPane{
+    -fx-background-color: #fff;
+    -fx-border-radius: 1px;
+    -fx-background-radius: 1px;
+    -fx-border-color: #d5d5d5;
+    -fx-border-width: 1px;
 }
 

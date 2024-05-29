@@ -1,14 +1,14 @@
 [
   {
-    "nombre": "Cafe solo",
-    "precio": 3.0
+    "nombre": "Solo",
+    "precio": 1.5
   },
   {
-    "nombre": "Cafe Bombon",
+    "nombre": "Bombon",
     "precio": 3.0
   },
   {
     "nombre": "Carajillo",
-    "precio": 7.5
+    "precio": 3.5
   }
 ]

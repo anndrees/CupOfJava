@@ -4,17 +4,11 @@ import javafx.scene.image.Image;
 
 public class Cafe extends Articulo{
 
-	public Cafe(Image foto, String nombre, double precio){
-		super(foto, nombre, precio);
+	public Cafe(String nombre, double precio){
+		super(nombre, precio);
 		this.categoria = Categorias.CAFES.toString();
-		System.out.println(Categorias.CAFES.toString());
 	}
 
-
-	@Override
-	public Image getFoto() {
-		return this.foto;
-	}
 
 	@Override
 	public String getNombre() {

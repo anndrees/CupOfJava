@@ -4,17 +4,13 @@ import javafx.scene.image.Image;
 
 public class Fruta extends Articulo{
 
-	public Fruta(Image foto, String nombre, double precio){
-		super(foto, nombre, precio);
+	public Fruta(String nombre, double precio){
+		super(nombre, precio);
 		this.categoria = Categorias.FRUTAS.toString();
 
 	}
 
 
-	@Override
-	public Image getFoto() {
-		return this.foto;
-	}
 
 	@Override
 	public String getNombre() {
