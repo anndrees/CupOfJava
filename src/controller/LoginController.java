@@ -19,7 +19,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import model.Usuario;
 
 import java.io.File;
@@ -138,7 +137,7 @@ public class LoginController implements Initializable{
                         root = loader.load();
                         MainController mainController = loader.getController();
                         mainController.setCurrentUser(user);
-                        System.out.println("Usuario logeado: " + user.getUsername()+ "");
+                        System.out.println("Usuario logeado: " + user.getUsername());
                         Stage mainStage = new Stage();
                         mainStage.setScene(new Scene(root));
                         mainStage.setTitle("Cup of Java");

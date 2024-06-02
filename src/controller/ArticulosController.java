@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.gson.*;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
@@ -25,24 +26,17 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import model.*;
 
-import com.google.gson.*;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-public class MainController implements Initializable{
+public class ArticulosController implements Initializable{
 
-    @FXML
-    public Button btnCerrarSesion;
     @FXML
     private Pane allPane;
 
     @FXML
-    private Pane allPane1; // este es el panel que se activaal pulsar el boton del menu vertical
+    private Pane allPane1;
 
     @FXML
     private AnchorPane anchorMain;
@@ -51,37 +45,25 @@ public class MainController implements Initializable{
     private Button btnBuscar;
 
     @FXML
-    private Button btnCobrar;
-
-    @FXML
     private Button btnHamburgerMenu;
 
     @FXML
-    private Button btnTickets;
+    private Button btnRemove;
+
+    @FXML
+    private Button btnSave;
 
     @FXML
     private Button btnVerticalMenu;
 
     @FXML
-    private Button btnClearTicket;
-
-    @FXML
     private Button btnCloseApp;
-
-    @FXML
-    private Button btnMoveTicket;
-
-    @FXML
-    private ComboBox<TipoPedido> cboxTipoPedido;
 
     @FXML
     private ComboBox<Categorias> cboxCatArticulos;
 
     @FXML
     private Pane hamburgerPane;
-
-    @FXML
-    private Label lblTicket;
 
     @FXML
     private Text txtUsuario;
@@ -96,18 +78,12 @@ public class MainController implements Initializable{
     private TableColumn<Articulo, Double> colPrecio;
 
     @FXML
-    private TableColumn<?, ?> colArticuloInTicket;
+    private TextField txtName;
 
     @FXML
-    private TableColumn<?, ?> colPrecioInTicket;
+    private TextField txtPrice;
 
-    @FXML
-    private TableColumn<?, ?> colQtyInTicket;
-
-    @FXML
-    private TableView<?> tblTicket;
-
-    private ObservableList<Articulo> articulos;
+    public ObservableList<Articulo> articulos;
 
     @FXML
     private Pane verticalPane;
@@ -153,27 +129,22 @@ public class MainController implements Initializable{
     }
 
     @FXML
-    void abrirArticulos(ActionEvent event){
-		try{
-            Node sourceNode = (Node) event.getSource();
-            Scene currentScene = sourceNode.getScene();
-            Stage mainStage = (Stage) currentScene.getWindow();
+    void abrirArticulos(MouseEvent event) {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Articulos.fxml"));
             Parent root = loader.load();
-            ArticulosController controller = loader.getController();
-            controller.setCurrentUser(currentUser);
-            mainStage.setScene(new Scene(root));
-            mainStage.setTitle("Cup of Java - Artículos");
-            mainStage.setResizable(false);
-            mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
-            mainStage.show();
-		}catch(IOException e){
-            e.printStackTrace();
-		}
-	}
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.setScene(scene);
+            stage.show();
+            ((Node) event.getSource()).getScene().getWindow().hide();
+        } catch (IOException ignored) {}
+
+    }
 
     @FXML
-    void abrirRecibos(ActionEvent event) {
+    void abrirRecibos(MouseEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Recibos.fxml"));
             Parent root = loader.load();
@@ -188,16 +159,23 @@ public class MainController implements Initializable{
 
     @FXML
     void abrirVentas(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Ventas.fxml"));
+        try{
+            Node sourceNode = (Node) event.getSource();
+            Scene currentScene = sourceNode.getScene();
+            Stage mainStage = (Stage) currentScene.getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.setScene(scene);
-            stage.show();
-            ((Node) event.getSource()).getScene().getWindow().hide();
-        } catch (IOException ignored) {}
+            MainController controller = loader.getController();
+            controller.setCurrentUser(currentUser);
+            controller.setArticulos(articulos);
+            mainStage.setScene(new Scene(root));
+            mainStage.setTitle("Cup of Java");
+            mainStage.setResizable(false);
+            mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+            mainStage.show();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -220,15 +198,6 @@ public class MainController implements Initializable{
         fadeTransition.play();
     }
 
-    @FXML
-    void clearTicket(ActionEvent event) {
-
-    }
-
-    @FXML
-    void moveTicket(ActionEvent event) {
-
-    }
 
     @FXML
     void closeApp(ActionEvent event) {
@@ -306,9 +275,7 @@ public class MainController implements Initializable{
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
         unfocus();
-        cboxTipoPedido.getItems().addAll(TipoPedido.values());
         cboxCatArticulos.getItems().addAll(Categorias.values());
-        cboxTipoPedido.setValue(TipoPedido.COMER_AQUI);
         cboxCatArticulos.setValue(Categorias.TODOS);
         hamburgerPane.setTranslateX(-205);
         verticalPane.setVisible(true);
@@ -316,7 +283,6 @@ public class MainController implements Initializable{
         verticalPane.setMouseTransparent(true);
         allPane1.setVisible(true);
         allPane1.setMouseTransparent(true);
-
 
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
@@ -335,9 +301,29 @@ public class MainController implements Initializable{
                 tblArticulos.setItems(filteredArticulos);
             }
         });
-/*
-        articulos = FXCollections.observableArrayList();
 
+        tblArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Elemento seleccionado: " + newValue);
+            if (newValue != null) {
+                Articulo selectedArticulo = (Articulo) newValue;
+                txtName.setText(selectedArticulo.getNombre());
+                txtPrice.setText(selectedArticulo.getPrecio() + "");
+                txtName.setDisable(false);
+                txtPrice.setDisable(false);
+                btnSave.setDisable(false);
+                btnRemove.setDisable(false);
+            }
+            else{
+                txtName.setDisable(true);
+                txtPrice.setDisable(true);
+                btnSave.setDisable(true);
+                btnRemove.setDisable(true);
+            }
+        });
+
+
+
+        articulos = FXCollections.observableArrayList();
         tblArticulos.setItems(articulos);
         Articulo solo = new Cafe("Solo", 1.5);
         Articulo bombon = new Cafe("Bombon", 3.0);
@@ -386,10 +372,8 @@ public class MainController implements Initializable{
         }catch(IOException e){
             throw new RuntimeException(e);
         }
-        */
 
 		cargarArticulos();
-
 
         System.out.println("Artículos cargados: " + articulos.size());
     }
@@ -399,9 +383,6 @@ public class MainController implements Initializable{
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
-
-        articulos = FXCollections.observableArrayList();
-
 
         try {
             File file = new File(rutaJsonCoffes);
@@ -430,8 +411,7 @@ public class MainController implements Initializable{
             } else {
                 System.out.println("El archivo coffes.json no existe o está vacío en la ruta especificada.");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
 
         try {
@@ -461,8 +441,7 @@ public class MainController implements Initializable{
             } else {
                 System.out.println("El archivo fruits.json no existe o está vacío en la ruta especificada.");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
 
         Set<Articulo> articulosSet = new TreeSet<>(Comparator.comparing(Articulo::getNombre));
@@ -487,10 +466,9 @@ public class MainController implements Initializable{
     }
 
 
-	/*
-    @FXML
+	@FXML
     void openFileChooser(ActionEvent event) {
-
+        /*
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -498,9 +476,8 @@ public class MainController implements Initializable{
         if (file != null) {
             btnBuscar.setImage(new Image(file.toURI().toString()));
         }
-
+        */
     }
-	 */
 
 
     @FXML
@@ -538,21 +515,126 @@ public class MainController implements Initializable{
     @FXML
     void unfocus() {
         btnBuscar.setFocusTraversable(false);
-        btnCobrar.setFocusTraversable(false);
         txtSearch.setFocusTraversable(false);
         btnHamburgerMenu.setFocusTraversable(false);
-        btnTickets.setFocusTraversable(false);
         btnVerticalMenu.setFocusTraversable(false);
         cboxCatArticulos.setFocusTraversable(false);
-        cboxTipoPedido.setFocusTraversable(false);
-        lblTicket.setFocusTraversable(false);
-        tblTicket.setFocusTraversable(false);
         tblArticulos.setFocusTraversable(false);
         txtSearch.setVisible(false);
-        lblTicket.getParent().requestFocus();
     }
 
-    public void setArticulos(ObservableList<Articulo> articulos){
-        this.articulos = articulos;
+    @FXML
+    public void guardarArticulo(MouseEvent mouseEvent){
+        Articulo selectedArticulo = (Articulo) tblArticulos.getSelectionModel().getSelectedItem();
+        selectedArticulo.setNombre(txtName.getText());
+        selectedArticulo.setPrecio(Double.parseDouble(txtPrice.getText()));
+
+        //Cambia el artículo en el json
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String rutaProyecto = System.getProperty("user.dir");
+        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
+        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+
+        if(selectedArticulo instanceof Cafe){
+            try{
+                File file = new File(rutaJsonCoffes);
+                if(file.exists() && file.length() > 0){
+                    try{
+                        FileReader reader = new FileReader(file);
+                        JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                        JsonArray jsonArray = jsonElement.getAsJsonArray();
+                        for(JsonElement jsonElement1 : jsonArray){
+                            JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                            if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                            }
+                        }
+                        FileWriter writer = new FileWriter(file);
+                        writer.write(jsonElement.toString());
+                        writer.close();
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Cup of Java");
+                        alert.setHeaderText("Modificacion realizada con exito");
+                        alert.setContentText("Se han guardado los cambios en el articulo " + selectedArticulo.getNombre());
+                        alert.showAndWait();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }else if(selectedArticulo instanceof Fruta){
+            try{
+                File file = new File(rutaJsonFruits);
+                if(file.exists() && file.length() > 0){
+                    try{
+                        FileReader reader = new FileReader(file);
+                        JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                        JsonArray jsonArray = jsonElement.getAsJsonArray();
+                        for(JsonElement jsonElement1 : jsonArray){
+                            JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                            if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                            }
+                        }
+                        FileWriter writer = new FileWriter(file);
+                        writer.write(jsonElement.toString());
+                        writer.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+        tblArticulos.refresh();
+    }
+
+    @FXML
+    public void eliminarArticulo(MouseEvent mouseEvent){
+        Articulo selectedArticulo = (Articulo) tblArticulos.getSelectionModel().getSelectedItem();
+
+        //Eliminarlo del json
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String rutaProyecto = System.getProperty("user.dir");
+        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
+        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+
+        try{
+            File file = new File(rutaJsonCoffes);
+            if(file.exists() && file.length() > 0){
+                try{
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+                    for(int i = 0 ; i < jsonArray.size() ; i++){
+                        JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+                        if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre()) && jsonObject.get("precio").getAsDouble() == selectedArticulo.getPrecio()){
+                            jsonArray.remove(i);
+                        }
+                    }
+                    FileWriter writer = new FileWriter(file);
+                    gson.toJson(jsonArray, writer);
+                    writer.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        articulos.remove(selectedArticulo);
+        tblArticulos.refresh();
+    }
+
+    @FXML
+    public void createItem(ActionEvent actionEvent){
+
     }
 }

@@ -24,4 +24,12 @@ public class Cafe extends Articulo{
 	public String getCategoria(){
 		return this.categoria;
 	}
+
+	public void setNombre(String nombre) {
+		super.setNombre(nombre);
+	}
+
+	public void setPrecio(double precio) {
+		super.setPrecio(precio);
+	}
 }

@@ -15,14 +15,14 @@
     -fx-background-color: #ba7861;
 }
 
-#btnVentas, #btnArticulos, #btnRecibos, #btnCerrarSesion, #btnCloseApp, #btnClearTicket, #btnMoveTicket {
+#btnVentas, #btnArticulos, #btnRecibos, #btnCerrarSesion, #btnCloseApp, #btnClearTicket, #btnCreateItem, #btnMoveTicket {
     -fx-background-color: WHITE;
     -fx-text-fill:  #782203;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
 }
 
-#btnClearTicket, #btnMoveTicket {
+#btnClearTicket, #btnMoveTicket, #btnCreateItem {
     -fx-text-fill: #000;
 }
 
@@ -31,7 +31,7 @@
 }
 
 #btnVentas:hover, #btnArticulos:hover, #btnRecibos:hover, #btnCerrarSesion:hover,
-#btnCloseApp:hover, #btnClearTicket:hover, #btnMoveTicket:hover {
+#btnCloseApp:hover, #btnClearTicket:hover,#btnCreateItem:hover, #btnMoveTicket:hover {
     -fx-background-color: #ededed;
     -fx-cursor: hand;
 }

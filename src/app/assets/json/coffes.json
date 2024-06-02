@@ -1,14 +1,1 @@
-[
-  {
-    "nombre": "Solo",
-    "precio": 1.5
-  },
-  {
-    "nombre": "Bombon",
-    "precio": 3.0
-  },
-  {
-    "nombre": "Carajillo",
-    "precio": 3.5
-  }
-]
+[{"nombre":"Solo","precio":1.5},{"nombre":"Bombon","precio":3.0},{"nombre":"Carajillo","precio":3.5}]
