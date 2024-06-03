@@ -474,7 +474,7 @@ public class MainController implements Initializable{
 
         // Depuración
         for (Articulo articulo : articulos) {
-            System.out.println("nombre: " + articulo.getNombre() + ", precio: " + articulo.getPrecio());
+            //System.out.println("nombre: " + articulo.getNombre() + ", precio: " + articulo.getPrecio());
         }
     }
 

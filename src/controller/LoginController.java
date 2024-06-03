@@ -119,18 +119,18 @@ public class LoginController implements Initializable{
                 JsonParser parser = new JsonParser();
                 JsonElement json = parser.parse(reader);
                 JsonArray users = json.getAsJsonArray();
-                boolean found = false;
+                boolean encontrado = false;
                 for (JsonElement userElement : users) {
                     JsonObject userObj = userElement.getAsJsonObject();
                     if (userObj.get("username").getAsString().equals(username) && userObj.get("password").getAsString().equals(password)) {
-                        found = true;
+                        encontrado = true;
 
                         //Create a new user
                         user = new Usuario(userObj.get("username").getAsString(), userObj.get("password").getAsString());
                     }
                 }
 
-                if (found) {
+                if (encontrado) {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Main.fxml"));
                     Parent root;
                     try{

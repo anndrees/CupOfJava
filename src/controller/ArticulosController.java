@@ -150,7 +150,6 @@ public class ArticulosController implements Initializable{
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = new Stage();
-            stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);
             stage.show();
             ((Node) event.getSource()).getScene().getWindow().hide();
@@ -303,7 +302,7 @@ public class ArticulosController implements Initializable{
         });
 
         tblArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Elemento seleccionado: " + newValue);
+            System.out.println("Elemento seleccionado: " + newValue.getNombre());
             if (newValue != null) {
                 Articulo selectedArticulo = (Articulo) newValue;
                 txtName.setText(selectedArticulo.getNombre());
@@ -529,105 +528,124 @@ public class ArticulosController implements Initializable{
         selectedArticulo.setNombre(txtName.getText());
         selectedArticulo.setPrecio(Double.parseDouble(txtPrice.getText()));
 
-        //Cambia el artículo en el json
+        //Extrae los articulos del json, los modifica y reescribe el json
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
 
-        if(selectedArticulo instanceof Cafe){
-            try{
-                File file = new File(rutaJsonCoffes);
-                if(file.exists() && file.length() > 0){
-                    try{
-                        FileReader reader = new FileReader(file);
-                        JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-                        JsonArray jsonArray = jsonElement.getAsJsonArray();
-                        for(JsonElement jsonElement1 : jsonArray){
-                            JsonObject jsonObject = jsonElement1.getAsJsonObject();
-                            if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
-                                jsonObject.addProperty("nombre", selectedArticulo.getNombre());
-                                jsonObject.addProperty("precio", selectedArticulo.getPrecio());
-                            }
-                        }
-                        FileWriter writer = new FileWriter(file);
-                        writer.write(jsonElement.toString());
-                        writer.close();
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Cup of Java");
-                        alert.setHeaderText("Modificacion realizada con exito");
-                        alert.setContentText("Se han guardado los cambios en el articulo " + selectedArticulo.getNombre());
-                        alert.showAndWait();
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    }
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }else if(selectedArticulo instanceof Fruta){
-            try{
-                File file = new File(rutaJsonFruits);
-                if(file.exists() && file.length() > 0){
-                    try{
-                        FileReader reader = new FileReader(file);
-                        JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-                        JsonArray jsonArray = jsonElement.getAsJsonArray();
-                        for(JsonElement jsonElement1 : jsonArray){
-                            JsonObject jsonObject = jsonElement1.getAsJsonObject();
-                            if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
-                                jsonObject.addProperty("nombre", selectedArticulo.getNombre());
-                                jsonObject.addProperty("precio", selectedArticulo.getPrecio());
-                            }
-                        }
-                        FileWriter writer = new FileWriter(file);
-                        writer.write(jsonElement.toString());
-                        writer.close();
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    }
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+		if(selectedArticulo instanceof Cafe){
+			File file = new File(rutaJsonCoffes);
+			if(file.exists() && file.length() > 0){
+				try{
+					FileReader reader = new FileReader(file);
+					JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+					JsonArray jsonArray = jsonElement.getAsJsonArray();
 
-        }
+					for (JsonElement jsonElement1 : jsonArray) {
+						JsonObject jsonObject = jsonElement1.getAsJsonObject();
+						if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
+							jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+							jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+						}
+					}
 
-        tblArticulos.refresh();
+					FileWriter writer = new FileWriter(file);
+					gson.toJson(jsonArray, writer);
+					writer.close();
+
+				}catch (IOException e){
+					e.printStackTrace();
+				}
+			}
+		}else if(selectedArticulo instanceof Fruta){
+			File file = new File(rutaJsonFruits);
+			if(file.exists() && file.length() > 0){
+				try{
+					FileReader reader = new FileReader(file);
+					JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+					JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+					for (JsonElement jsonElement1 : jsonArray) {
+						JsonObject jsonObject = jsonElement1.getAsJsonObject();
+						if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
+							jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+							jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+						}
+					}
+
+					FileWriter writer = new FileWriter(file);
+					gson.toJson(jsonArray, writer);
+					writer.close();
+
+				}catch (IOException e){
+					e.printStackTrace();
+				}
+			}
+		}
+
+
+		tblArticulos.refresh();
     }
 
     @FXML
     public void eliminarArticulo(MouseEvent mouseEvent){
         Articulo selectedArticulo = (Articulo) tblArticulos.getSelectionModel().getSelectedItem();
 
-        //Eliminarlo del json
+        // Extrae los articulos del json, elimina el articulo seleccionado y reescribe el json
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
 
-        try{
+        if(selectedArticulo instanceof Cafe){
             File file = new File(rutaJsonCoffes);
             if(file.exists() && file.length() > 0){
                 try{
                     FileReader reader = new FileReader(file);
                     JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
                     JsonArray jsonArray = jsonElement.getAsJsonArray();
-                    for(int i = 0 ; i < jsonArray.size() ; i++){
-                        JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
-                        if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre()) && jsonObject.get("precio").getAsDouble() == selectedArticulo.getPrecio()){
-                            jsonArray.remove(i);
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
+                            jsonObject.remove("nombre");
+                            jsonObject.remove("precio");
                         }
                     }
+
                     FileWriter writer = new FileWriter(file);
                     gson.toJson(jsonArray, writer);
                     writer.close();
-                }catch(Exception e){
+
+                }catch (IOException e){
                     e.printStackTrace();
                 }
             }
-        }catch(Exception e){
-            e.printStackTrace();
+        }else if(selectedArticulo instanceof Fruta){
+            File file = new File(rutaJsonFruits);
+            if(file.exists() && file.length() > 0){
+                try{
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
+                            jsonObject.remove("nombre");
+                            jsonObject.remove("precio");
+                        }
+                    }
+
+                    FileWriter writer = new FileWriter(file);
+                    gson.toJson(jsonArray, writer);
+                    writer.close();
+
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
         }
         articulos.remove(selectedArticulo);
         tblArticulos.refresh();
