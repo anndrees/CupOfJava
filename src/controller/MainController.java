@@ -162,6 +162,7 @@ public class MainController implements Initializable{
             Parent root = loader.load();
             ArticulosController controller = loader.getController();
             controller.setCurrentUser(currentUser);
+            controller.setArticulos(articulos);
             mainStage.setScene(new Scene(root));
             mainStage.setTitle("Cup of Java - Artículos");
             mainStage.setResizable(false);
@@ -300,6 +301,8 @@ public class MainController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println("Initialize");
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String rutaProyecto = System.getProperty("user.dir");
@@ -550,6 +553,7 @@ public class MainController implements Initializable{
         tblArticulos.setFocusTraversable(false);
         txtSearch.setVisible(false);
         lblTicket.getParent().requestFocus();
+        tblArticulos.getSelectionModel().clearSelection();
     }
 
     public void setArticulos(ObservableList<Articulo> articulos){

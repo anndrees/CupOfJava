@@ -268,6 +268,7 @@ public class ArticulosController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        System.out.println("Initialize");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String rutaProyecto = System.getProperty("user.dir");
@@ -302,9 +303,9 @@ public class ArticulosController implements Initializable{
         });
 
         tblArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Elemento seleccionado: " + newValue.getNombre());
             if (newValue != null) {
                 Articulo selectedArticulo = (Articulo) newValue;
+                System.out.println("Elemento seleccionado: " + selectedArticulo.getNombre());
                 txtName.setText(selectedArticulo.getNombre());
                 txtPrice.setText(selectedArticulo.getPrecio() + "");
                 txtName.setDisable(false);
@@ -313,6 +314,8 @@ public class ArticulosController implements Initializable{
                 btnRemove.setDisable(false);
             }
             else{
+                txtName.setText("");
+                txtPrice.setText("");
                 txtName.setDisable(true);
                 txtPrice.setDisable(true);
                 btnSave.setDisable(true);
@@ -654,5 +657,14 @@ public class ArticulosController implements Initializable{
     @FXML
     public void createItem(ActionEvent actionEvent){
 
+    }
+
+    @FXML
+    void unfocus(MouseEvent event) {
+        tblArticulos.getSelectionModel().clearSelection();
+    }
+
+    public void setArticulos(ObservableList<Articulo> articulos){
+        this.articulos = articulos;
     }
 }
