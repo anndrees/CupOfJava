@@ -16,7 +16,7 @@
 
 <AnchorPane fx:id="anchorMain" maxHeight="720.0" maxWidth="1200.0" minHeight="700.0" minWidth="1200.0" onMouseClicked="#unfocus" prefHeight="700.0" prefWidth="1200.0" stylesheets="@../app/assets/styles/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ArticulosController">
    <children>
-      <ComboBox fx:id="cboxCatArticulos" layoutX="90.0" layoutY="24.0" prefHeight="50.0" prefWidth="723.0" visibleRowCount="5" />
+      <ComboBox fx:id="cboxCatArticulos" layoutX="90.0" layoutY="24.0" prefHeight="50.0" prefWidth="723.0" />
       <Button fx:id="btnSave" disable="true" layoutX="880.0" layoutY="593.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#guardarArticulo" prefHeight="75.0" prefWidth="140.0" text="GUARDAR" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
          <font>
             <Font size="18.0" />
@@ -78,22 +78,31 @@
          </graphic>
       </Button>
       <TextField fx:id="txtSearch" layoutX="30.0" layoutY="24.0" onKeyPressed="#buscar" prefHeight="51.0" prefWidth="790.0" visible="false" />
-      <Label layoutX="880.0" layoutY="220.0" text="Nombre">
+      <Pane layoutX="916.0" layoutY="108.0" prefHeight="110.0" prefWidth="227.0" style="-fx-background-color: #FFDBCC; -fx-background-radius: 10px;">
+         <children>
+            <Text layoutX="10.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Aquí puedes modificar el nombre y el precio de un artículo" textAlignment="CENTER" wrappingWidth="206.009765625">
+               <font>
+                  <Font name="Rubik-Bold" size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+      <Label layoutX="884.0" layoutY="264.0" text="Nombre">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <TextField fx:id="txtName" disable="true" layoutX="880.0" layoutY="252.0" prefHeight="50.0" prefWidth="290.0" promptText="Nombre del artículo">
+      <TextField fx:id="txtName" disable="true" layoutX="884.0" layoutY="296.0" prefHeight="50.0" prefWidth="290.0" promptText="Nombre del artículo">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <Label layoutX="880.0" layoutY="334.0" text="Precio">
+      <Label layoutX="884.0" layoutY="378.0" text="Precio">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <TextField fx:id="txtPrice" disable="true" layoutX="880.0" layoutY="366.0" prefHeight="50.0" prefWidth="290.0" promptText="Precio del artículo">
+      <TextField fx:id="txtPrice" disable="true" layoutX="884.0" layoutY="410.0" prefHeight="50.0" prefWidth="290.0" promptText="Precio del artículo">
          <font>
             <Font size="14.0" />
          </font>
@@ -103,11 +112,11 @@
       <Pane fx:id="verticalPane" layoutX="1015.0" layoutY="20.0" prefHeight="143.0" prefWidth="160.0" stylesheets="@../app/assets/styles/main.css" visible="false">
          <children>
             <Button fx:id="btnCloseApp" layoutX="1.0" layoutY="91.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#closeApp" prefHeight="40.0" prefWidth="158.0" text="Cerrar programa" />
-            <Button fx:id="btnCreateItem" disable="true" layoutX="1.0" layoutY="9.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#createItem" prefHeight="40.0" prefWidth="158.0" text="Crear nuevo artículo" />
+            <Button fx:id="btnCreateItem" layoutX="1.0" layoutY="9.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#createItem" prefHeight="40.0" prefWidth="158.0" text="Crear nuevo artículo" />
             <Button fx:id="btnCerrarSesion" layoutX="1.0" layoutY="50.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#cerrarSesion" prefHeight="40.0" prefWidth="158.0" text="Cerrar sesión" />
          </children>
       </Pane>
-      <Pane fx:id="hamburgerPane" maxHeight="700.0" maxWidth="200.0" minHeight="700.0" minWidth="200.0" prefHeight="700.0" prefWidth="200.0" style="-fx-background-color: WHITE;" stylesheets="@../app/assets/styles/main.css">
+      <Pane fx:id="hamburgerPane" maxHeight="700.0" maxWidth="200.0" minHeight="700.0" minWidth="200.0" prefHeight="700.0" prefWidth="200.0" style="-fx-background-color: WHITE;" stylesheets="@../app/assets/styles/main.css" visible="false">
          <children>
             <Pane prefHeight="67.0" prefWidth="200.0" style="-fx-background-color: #782203;">
                <children>
@@ -134,6 +143,7 @@
             <Text fx:id="txtUsuario" fill="#909090" layoutY="661.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-text-alignment: center;" wrappingWidth="200.0" />
          </children>
       </Pane>
+      <Pane fx:id="allPaneModal" layoutX="-44.0" layoutY="-49.0" mouseTransparent="true" onMouseClicked="#closeVerticalMenu" opacity="0.5" prefHeight="774.0" prefWidth="1258.0" style="-fx-background-color: #000;" visible="false" />
    </children>
    <rotationAxis>
       <Point3D />

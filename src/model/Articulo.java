@@ -2,7 +2,6 @@ package model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.Objects;
 
 public abstract class Articulo{
 
-	private List<Articulo> articulos = new ArrayList<>();
+	private final List<Articulo> articulos = new ArrayList<>();
 
 	public String nombre;
 	public double precio;
@@ -23,10 +22,16 @@ public abstract class Articulo{
 	}
 
 
-	public abstract String getNombre();
-	public abstract double getPrecio();
+	public String getNombre(){
+		return this.nombre;
+	}
+	public double getPrecio(){
+		return this.precio;
+	}
 
-	public abstract String getCategoria();
+	public String getCategoria(){
+		return this.categoria;
+	}
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -36,6 +41,7 @@ public abstract class Articulo{
 		this.precio = precio;
 	}
 
+
 	@Override
 	public boolean equals(Object o){
 		if(this == o)
@@ -43,12 +49,12 @@ public abstract class Articulo{
 		if(o == null || getClass() != o.getClass())
 			return false;
 		Articulo articulo = (Articulo) o;
-		return Double.compare(precio, articulo.precio) == 0 && Objects.equals(nombre, articulo.nombre);
+		return Double.compare(precio, articulo.precio) == 0 && Objects.equals(nombre, articulo.nombre) && Objects.equals(categoria, articulo.categoria);
 	}
 
 	@Override
 	public int hashCode(){
-		return Objects.hash(nombre, precio);
+		return Objects.hash(nombre, precio, categoria);
 	}
 
 	public ObservableList<Articulo> getArticulos() {

@@ -1,8 +1,8 @@
 package model;
 
 public enum TipoPedido {
-	COMER_AQUI("Comer aquí"),
-	PARA_LLEVAR("Para llevar"),
+	AQUI("Comer aquí"),
+	LLEVAR("Para llevar"),
 	DOMICILIO("Domicilio"),
 	RECOGER("Para recoger");
 
@@ -16,4 +16,22 @@ public enum TipoPedido {
 	public String toString() {
 		return textoFormateado;
 	}
+
+	public static TipoPedido fromString(String tipo) {
+		switch(tipo.toLowerCase()) {
+			case "comer aquí":
+				return AQUI;
+			case "comer aqui":
+				return AQUI;
+			case "para llevar":
+				return LLEVAR;
+			case "domicilio":
+				return DOMICILIO;
+			case "para recoger":
+				return RECOGER;
+			default:
+				return null;
+		}
+	}
+
 }

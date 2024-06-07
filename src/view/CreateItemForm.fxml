@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="anchorCreateItem" minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" stylesheets="@../app/assets/styles/login.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CreateItemController">
+    <children>
+        <TextField fx:id="txtNombre" layoutX="100.0" layoutY="181.0" onKeyPressed="#focusPrice" prefHeight="35.0" prefWidth="400.0" promptText="Nombre">
+            <font>
+                <Font name="Rubik-Bold" size="18.0" />
+            </font>
+        </TextField>
+        <Button fx:id="btnCreateItem" layoutX="100.0" layoutY="323.0" mnemonicParsing="false" onAction="#createItem" onKeyPressed="#focusCancelBtn" prefHeight="70.0" prefWidth="400.0" text="Crear artículo">
+            <font>
+                <Font name="Rubik-Bold" size="20.0" />
+            </font>
+        </Button>
+        <ImageView fx:id="imgLogo" fitHeight="150.0" fitWidth="200.0" layoutX="200.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../app/assets/imgs/logo.png" />
+            </image>
+        </ImageView>
+      <TextField fx:id="txtPrecio" layoutX="100.0" layoutY="230.0" onKeyPressed="#focusCategory" prefHeight="35.0" prefWidth="400.0" promptText="Precio">
+         <font>
+            <Font name="Rubik-Bold" size="18.0" />
+         </font>
+      </TextField>
+      <Button fx:id="btnCancelar" layoutX="100.0" layoutY="397.0" mnemonicParsing="false" onAction="#cancelar" onKeyPressed="#focusName" prefHeight="38.0" prefWidth="400.0" text="Cancelar">
+         <font>
+            <Font name="Rubik-Bold" size="20.0" />
+         </font>
+      </Button>
+      <ComboBox fx:id="cboxCat" layoutX="100.0" layoutY="278.0" onKeyPressed="#focusCreateBtn" prefHeight="35.0" prefWidth="400.0" promptText="Selecciona una categoría">
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
+      </ComboBox>
+    </children>
+</AnchorPane>

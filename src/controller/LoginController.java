@@ -125,7 +125,6 @@ public class LoginController implements Initializable{
                     if (userObj.get("username").getAsString().equals(username) && userObj.get("password").getAsString().equals(password)) {
                         encontrado = true;
 
-                        //Create a new user
                         user = new Usuario(userObj.get("username").getAsString(), userObj.get("password").getAsString());
                     }
                 }
@@ -144,20 +143,19 @@ public class LoginController implements Initializable{
                         mainStage.setResizable(false);
                         mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
                         mainStage.centerOnScreen();
-                        //mainStage.initStyle(StageStyle.UNDECORATED);
                         mainStage.show();
 
                         ((Node) (event.getSource())).getScene().getWindow().hide();
                     }catch(Exception ignored){}
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Cup of Java");
                     alert.setHeaderText("Credenciales incorrectas");
                     alert.setContentText("Nombre de usuario o contraseña incorrectos, intentalo de nuevo");
                     alert.showAndWait();
                 }
             }catch(IOException e){
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }

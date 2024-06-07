@@ -21,10 +21,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import model.*;
+import model.Articulos.*;
 
 import java.io.*;
 import java.net.URL;
@@ -61,7 +63,7 @@ public class ArticulosController implements Initializable{
 
     @FXML
     private ComboBox<Categorias> cboxCatArticulos;
-
+    
     @FXML
     private Pane hamburgerPane;
 
@@ -83,10 +85,13 @@ public class ArticulosController implements Initializable{
     @FXML
     private TextField txtPrice;
 
-    public ObservableList<Articulo> articulos;
+    public static ObservableList<Articulo> articulos;
 
     @FXML
     private Pane verticalPane;
+
+    @FXML
+    private Pane allPaneModal;
 
     @FXML
     private TextField txtSearch;
@@ -102,6 +107,10 @@ public class ArticulosController implements Initializable{
 
     private Usuario currentUser;
     private boolean hamburgerMenuVisible = false;
+
+    public static List<Articulo> getArticulos(){
+        return articulos;
+    }
 
 
     @FXML
@@ -150,6 +159,7 @@ public class ArticulosController implements Initializable{
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = new Stage();
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(scene);
             stage.show();
             ((Node) event.getSource()).getScene().getWindow().hide();
@@ -171,14 +181,15 @@ public class ArticulosController implements Initializable{
             mainStage.setTitle("Cup of Java");
             mainStage.setResizable(false);
             mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+            mainStage.centerOnScreen();
             mainStage.show();
         }catch(IOException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
     @FXML
-    void openVerticalMenu(ActionEvent event) { //Abre el vertical menu con una transicion que dure 300 milisegundos y establece el valor de opacidad de 0.0 a 1.0
+    void openVerticalMenu(ActionEvent event) {
         verticalPane.setMouseTransparent(false);
         allPane1.setMouseTransparent(false);
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(150), verticalPane);
@@ -268,12 +279,6 @@ public class ArticulosController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Initialize");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        String rutaProyecto = System.getProperty("user.dir");
-        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
-        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
         unfocus();
         cboxCatArticulos.getItems().addAll(Categorias.values());
         cboxCatArticulos.setValue(Categorias.TODOS);
@@ -286,8 +291,7 @@ public class ArticulosController implements Initializable{
 
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-
-
+        
         cboxCatArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Categorias.TODOS) {
                 tblArticulos.setItems(articulos);
@@ -304,79 +308,25 @@ public class ArticulosController implements Initializable{
 
         tblArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                Articulo selectedArticulo = (Articulo) newValue;
-                System.out.println("Elemento seleccionado: " + selectedArticulo.getNombre());
-                txtName.setText(selectedArticulo.getNombre());
-                txtPrice.setText(selectedArticulo.getPrecio() + "");
+                System.out.println("Elemento seleccionado: " + newValue.getNombre());
+
+				txtName.setText(newValue.getNombre());
+                txtPrice.setText(newValue.getPrecio() + "");
                 txtName.setDisable(false);
                 txtPrice.setDisable(false);
                 btnSave.setDisable(false);
                 btnRemove.setDisable(false);
             }
             else{
-                txtName.setText("");
-                txtPrice.setText("");
                 txtName.setDisable(true);
                 txtPrice.setDisable(true);
                 btnSave.setDisable(true);
                 btnRemove.setDisable(true);
             }
         });
-
-
-
         articulos = FXCollections.observableArrayList();
-        tblArticulos.setItems(articulos);
-        Articulo solo = new Cafe("Solo", 1.5);
-        Articulo bombon = new Cafe("Bombon", 3.0);
-        Articulo carajillo = new Cafe("Carajillo", 3.5);
-        Articulo manzana = new Fruta("Manzana", 1.0);
-        articulos.addAll(solo, bombon, carajillo, manzana);
-
-
-        File fileCoffee = new File(rutaJsonCoffes);
-        File fileFruits = new File(rutaJsonFruits);
-
-        try{
-            FileWriter writer;
-            writer = new FileWriter(fileCoffee);
-
-            JsonArray jsonArray = new JsonArray();
-            for (Articulo articulo : articulos) {
-                if(articulo.getClass().getSimpleName().equals("Cafe")){
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("nombre", articulo.getNombre());
-                    jsonObject.addProperty("precio", articulo.getPrecio());
-                    jsonArray.add(jsonObject);
-                }
-            }
-            gson.toJson(jsonArray, writer);
-            writer.close();
-		}catch(IOException e){
-			throw new RuntimeException(e);
-		}
-
-        try{
-            FileWriter writer;
-            writer = new FileWriter(fileFruits);
-
-            JsonArray jsonArray = new JsonArray();
-            for (Articulo articulo : articulos) {
-                if(articulo.getClass().getSimpleName().equals("Fruta")){
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("nombre", articulo.getNombre());
-                    jsonObject.addProperty("precio", articulo.getPrecio());
-                    jsonArray.add(jsonObject);
-                }
-            }
-            gson.toJson(jsonArray, writer);
-            writer.close();
-        }catch(IOException e){
-            throw new RuntimeException(e);
-        }
-
-		cargarArticulos();
-
+        cargarArticulos();
+        
         System.out.println("Artículos cargados: " + articulos.size());
     }
 
@@ -385,6 +335,9 @@ public class ArticulosController implements Initializable{
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+        String rutaJsonDrinks = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "drinks.json";
+        String rutaJsonDesserts = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "desserts.json";
+        String rutaJsonOthers = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "others.json";
 
         try {
             File file = new File(rutaJsonCoffes);
@@ -408,12 +361,13 @@ public class ArticulosController implements Initializable{
 
                     tblArticulos.setItems(articulos);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             } else {
                 System.out.println("El archivo coffes.json no existe o está vacío en la ruta especificada.");
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         try {
@@ -438,12 +392,106 @@ public class ArticulosController implements Initializable{
 
                     tblArticulos.setItems(articulos);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             } else {
                 System.out.println("El archivo fruits.json no existe o está vacío en la ruta especificada.");
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try{
+            File file = new File(rutaJsonDrinks);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Refresco(nombre,precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("El archivo drinks.json no existe o está vacío en la ruta especificada.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try{
+            File file = new File(rutaJsonDesserts);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Postre(nombre,precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("El archivo desserts.json no existe o está vacío en la ruta especificada.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try{
+            File file = new File(rutaJsonOthers);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Otro(nombre,precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("El archivo others.json no existe o está vacío en la ruta especificada.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         Set<Articulo> articulosSet = new TreeSet<>(Comparator.comparing(Articulo::getNombre));
@@ -453,7 +501,6 @@ public class ArticulosController implements Initializable{
         articulos.clear();
         articulos.addAll(articulosSet);
 
-        // Depuración
         for (Articulo articulo : articulos) {
             System.out.println("nombre: " + articulo.getNombre() + ", precio: " + articulo.getPrecio());
         }
@@ -471,6 +518,7 @@ public class ArticulosController implements Initializable{
 	@FXML
     void openFileChooser(ActionEvent event) {
         /*
+        Un selector de archivos
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -527,144 +575,380 @@ public class ArticulosController implements Initializable{
 
     @FXML
     public void guardarArticulo(MouseEvent mouseEvent){
-        Articulo selectedArticulo = (Articulo) tblArticulos.getSelectionModel().getSelectedItem();
-        selectedArticulo.setNombre(txtName.getText());
-        selectedArticulo.setPrecio(Double.parseDouble(txtPrice.getText()));
+        Articulo selectedArticulo = tblArticulos.getSelectionModel().getSelectedItem();
+        String nombre = txtName.getText();
+        String precio = txtPrice.getText().replace(",", ".");
 
-        //Extrae los articulos del json, los modifica y reescribe el json
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String rutaProyecto = System.getProperty("user.dir");
-        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
-        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+        if(precio.matches("[0-9]+(\\.[0-9]+)?")) {
+            System.out.println("precio " + precio);
 
-		if(selectedArticulo instanceof Cafe){
-			File file = new File(rutaJsonCoffes);
-			if(file.exists() && file.length() > 0){
-				try{
-					FileReader reader = new FileReader(file);
-					JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-					JsonArray jsonArray = jsonElement.getAsJsonArray();
+            selectedArticulo.setNombre(nombre);
+            selectedArticulo.setPrecio(Double.parseDouble(precio));
 
-					for (JsonElement jsonElement1 : jsonArray) {
-						JsonObject jsonObject = jsonElement1.getAsJsonObject();
-						if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
-							jsonObject.addProperty("nombre", selectedArticulo.getNombre());
-							jsonObject.addProperty("precio", selectedArticulo.getPrecio());
-						}
-					}
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String rutaProyecto = System.getProperty("user.dir");
+            String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
+            String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+            String rutaJsonDrinks = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "drinks.json";
+            String rutaJsonDesserts = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "desserts.json";
+            String rutaJsonOthers = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "others.json";
 
-					FileWriter writer = new FileWriter(file);
-					gson.toJson(jsonArray, writer);
-					writer.close();
+            switch(selectedArticulo){
+                case Cafe ignored -> {
+                    try{
+                        File file = new File(rutaJsonCoffes);
+                        if(file.exists() && file.length() > 0){
+                            try{
+                                FileReader reader = new FileReader(file);
+                                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                                for(JsonElement jsonElement1 : jsonArray){
+                                    JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                                    if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                        jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                        jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                                    }
+                                }
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(jsonElement.toString());
+                                writer.close();
+                                alertaCambio(selectedArticulo);
 
-				}catch (IOException e){
-					e.printStackTrace();
-				}
-			}
-		}else if(selectedArticulo instanceof Fruta){
-			File file = new File(rutaJsonFruits);
-			if(file.exists() && file.length() > 0){
-				try{
-					FileReader reader = new FileReader(file);
-					JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-					JsonArray jsonArray = jsonElement.getAsJsonArray();
+                            }catch(IOException e){
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }catch(Exception e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+                case Fruta ignored1 -> {
+                    try{
+                        File file = new File(rutaJsonFruits);
+                        if(file.exists() && file.length() > 0){
+                            try{
+                                FileReader reader = new FileReader(file);
+                                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                                for(JsonElement jsonElement1 : jsonArray){
+                                    JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                                    if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                        jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                        jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                                    }
+                                }
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(jsonElement.toString());
+                                writer.close();
+                                alertaCambio(selectedArticulo);
+                            }catch(IOException e){
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }catch(Exception e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+                case Refresco ignored2 -> {
+                    try{
+                        File file = new File(rutaJsonDrinks);
+                        if(file.exists() && file.length() > 0){
+                            try{
+                                FileReader reader = new FileReader(file);
+                                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                                for(JsonElement jsonElement1 : jsonArray){
+                                    JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                                    if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                        jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                        jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                                    }
+                                }
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(jsonElement.toString());
+                                writer.close();
+                                alertaCambio(selectedArticulo);
+                            }catch(IOException e){
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }catch(Exception e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+                case Postre ignored3 -> {
+                    try{
+                        File file = new File(rutaJsonDesserts);
+                        if(file.exists() && file.length() > 0){
+                            try{
+                                FileReader reader = new FileReader(file);
+                                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                                for(JsonElement jsonElement1 : jsonArray){
+                                    JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                                    if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                        jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                        jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                                    }
+                                }
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(jsonElement.toString());
+                                writer.close();
+                                alertaCambio(selectedArticulo);
+                            }catch(IOException e){
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }catch(Exception e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+                case Otro ignored4 -> {
+                    try{
+                        File file = new File(rutaJsonOthers);
+                        if(file.exists() && file.length() > 0){
+                            try{
+                                FileReader reader = new FileReader(file);
+                                JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                                for(JsonElement jsonElement1 : jsonArray){
+                                    JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                                    if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())){
+                                        jsonObject.addProperty("nombre", selectedArticulo.getNombre());
+                                        jsonObject.addProperty("precio", selectedArticulo.getPrecio());
+                                    }
+                                }
+                                FileWriter writer = new FileWriter(file);
+                                writer.write(jsonElement.toString());
+                                writer.close();
+                                alertaCambio(selectedArticulo);
+                            }catch(IOException e){
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }catch(Exception e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+                default -> {
+                }
+            }
+        }
 
-					for (JsonElement jsonElement1 : jsonArray) {
-						JsonObject jsonObject = jsonElement1.getAsJsonObject();
-						if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
-							jsonObject.addProperty("nombre", selectedArticulo.getNombre());
-							jsonObject.addProperty("precio", selectedArticulo.getPrecio());
-						}
-					}
-
-					FileWriter writer = new FileWriter(file);
-					gson.toJson(jsonArray, writer);
-					writer.close();
-
-				}catch (IOException e){
-					e.printStackTrace();
-				}
-			}
-		}
 
 
-		tblArticulos.refresh();
+        tblArticulos.refresh();
+    }
+
+    private void alertaCambio(Articulo selectedArticulo) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Cup of Java");
+        alert.setHeaderText("Modificación realizada con éxito");
+        alert.setContentText("Se han guardado los cambios en el artículo " + selectedArticulo.getNombre());
+        alert.showAndWait();
     }
 
     @FXML
     public void eliminarArticulo(MouseEvent mouseEvent){
-        Articulo selectedArticulo = (Articulo) tblArticulos.getSelectionModel().getSelectedItem();
+        Articulo selectedArticulo = tblArticulos.getSelectionModel().getSelectedItem();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Eliminar artículo");
+        alert.setHeaderText("¿Estás seguro de eliminar este artículo?");
+        alert.setContentText("Se eliminará el siguiente artículo: " + selectedArticulo.getNombre());
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isPresent() && result.get() == ButtonType.OK){
 
-        // Extrae los articulos del json, elimina el articulo seleccionado y reescribe el json
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String rutaProyecto = System.getProperty("user.dir");
-        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
-        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String rutaProyecto = System.getProperty("user.dir");
+            String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
+            String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+            String rutaJsonDrinks = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "drinks.json";
+            String rutaJsonDesserts = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "desserts.json";
+            String rutaJsonOthers = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "others.json";
 
-        if(selectedArticulo instanceof Cafe){
-            File file = new File(rutaJsonCoffes);
-            if(file.exists() && file.length() > 0){
-                try{
-                    FileReader reader = new FileReader(file);
-                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+			switch(selectedArticulo){
+				case Cafe cafe -> {
+					try{
+						File file = new File(rutaJsonCoffes);
+						if(file.exists() && file.length() > 0){
+							try{
+								FileReader reader = new FileReader(file);
+								JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+								JsonArray jsonArray = getJsonElements(jsonElement, selectedArticulo);
+								FileWriter writer = new FileWriter(file);
+								gson.toJson(jsonArray, writer);
+								writer.close();
+							}catch(Exception e){
+								System.out.println(e.getMessage());
+							}
+						}
+					}catch(Exception e){
+						System.out.println(e.getMessage());
+					}
+				}
+				case Fruta fruta -> {
+					try{
+						File file = new File(rutaJsonFruits);
+						if(file.exists() && file.length() > 0){
+							try{
+								FileReader reader = new FileReader(file);
+								JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+								JsonArray jsonArray = getJsonElements(jsonElement, selectedArticulo);
+								FileWriter writer = new FileWriter(file);
+								gson.toJson(jsonArray, writer);
+								writer.close();
+							}catch(Exception e){
+								System.out.println(e.getMessage());
+							}
+						}
+					}catch(Exception e){
+						System.out.println(e.getMessage());
+					}
+				}
+				case Refresco refresco -> {
+					try{
+						File file = new File(rutaJsonDrinks);
+						if(file.exists() && file.length() > 0){
+							try{
+								FileReader reader = new FileReader(file);
+								JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+								JsonArray jsonArray = getJsonElements(jsonElement, selectedArticulo);
+								FileWriter writer = new FileWriter(file);
+								gson.toJson(jsonArray, writer);
+								writer.close();
+							}catch(Exception e){
+								System.out.println(e.getMessage());
+							}
+						}
+					}catch(Exception e){
+						System.out.println(e.getMessage());
+					}
+				}
+				case Postre postre -> {
+					try{
+						File file = new File(rutaJsonDesserts);
+						if(file.exists() && file.length() > 0){
+							try{
+								FileReader reader = new FileReader(file);
+								JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+								JsonArray jsonArray = getJsonElements(jsonElement, selectedArticulo);
+								FileWriter writer = new FileWriter(file);
+								gson.toJson(jsonArray, writer);
+								writer.close();
+							}catch(Exception e){
+								System.out.println(e.getMessage());
+							}
+						}
+					}catch(Exception e){
+						System.out.println(e.getMessage());
+					}
+				}
+				case Otro otro -> {
+					try{
+						File file = new File(rutaJsonOthers);
+						if(file.exists() && file.length() > 0){
+							try{
+								FileReader reader = new FileReader(file);
+								JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+								JsonArray jsonArray = getJsonElements(jsonElement, selectedArticulo);
+								FileWriter writer = new FileWriter(file);
+								gson.toJson(jsonArray, writer);
+								writer.close();
+							}catch(Exception e){
+								System.out.println(e.getMessage());
+							}
+						}
+					}catch(Exception e){
+						System.out.println(e.getMessage());
+					}
+				}
+				default -> {
+				}
+			}
+            articulos.remove(selectedArticulo);
+            Set<Articulo> articulosSet = new TreeSet<>(Comparator.comparing(Articulo::getNombre));
+            articulosSet.addAll(articulos);
+            articulos.clear();
+            articulos.addAll(articulosSet);
+            tblArticulos.setItems(articulos);
+            txtName.setText("");
+            txtPrice.setText("");
+            txtName.setDisable(true);
+            txtPrice.setDisable(true);
+            btnRemove.setDisable(true);
+            btnSave.setDisable(true);
+        }
+    }
 
-                    for (JsonElement jsonElement1 : jsonArray) {
-                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
-                        if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
-                            jsonObject.remove("nombre");
-                            jsonObject.remove("precio");
-                        }
-                    }
-
-                    FileWriter writer = new FileWriter(file);
-                    gson.toJson(jsonArray, writer);
-                    writer.close();
-
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-        }else if(selectedArticulo instanceof Fruta){
-            File file = new File(rutaJsonFruits);
-            if(file.exists() && file.length() > 0){
-                try{
-                    FileReader reader = new FileReader(file);
-                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
-                    JsonArray jsonArray = jsonElement.getAsJsonArray();
-
-                    for (JsonElement jsonElement1 : jsonArray) {
-                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
-                        if (jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre())) {
-                            jsonObject.remove("nombre");
-                            jsonObject.remove("precio");
-                        }
-                    }
-
-                    FileWriter writer = new FileWriter(file);
-                    gson.toJson(jsonArray, writer);
-                    writer.close();
-
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
+    private static JsonArray getJsonElements(JsonElement jsonElement, Articulo selectedArticulo){
+        JsonArray jsonArray = jsonElement.getAsJsonArray();
+        for(int i = 0 ; i < jsonArray.size() ; i++){
+            JsonObject jsonObject = jsonArray.get(i).getAsJsonObject();
+            if(jsonObject.get("nombre").getAsString().equals(selectedArticulo.getNombre()) && jsonObject.get("precio").getAsDouble() == selectedArticulo.getPrecio()){
+                jsonArray.remove(i);
             }
         }
-        articulos.remove(selectedArticulo);
-        tblArticulos.refresh();
+        return jsonArray;
     }
 
     @FXML
-    public void createItem(ActionEvent actionEvent){
+    public void createItem(MouseEvent actionEvent){
+		Parent root;
+		try{
+			root = FXMLLoader.load(getClass().getResource("../view/CreateItemForm.fxml"));
+		}catch(IOException e){
+			throw new RuntimeException(e);
+		}
+
+        Stage modalStage = new Stage();
+        modalStage.initModality(Modality.APPLICATION_MODAL);
+        modalStage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
+        Scene createItemScene = new Scene(root);
+        modalStage.setScene(createItemScene);
+        closeVerticalMenu(actionEvent);
+        opacarAllPaneModal();
+
+        modalStage.showAndWait();
+        System.out.println("despues de abrir el modal");
+        desopacarAllPaneModal();
+
+
+        Set<Articulo> articulosSet = new TreeSet<>(Comparator.comparing(Articulo::getNombre));
+        articulosSet.addAll(articulos);
+        articulos.clear();
+        articulos.addAll(articulosSet);
+        tblArticulos.setItems(articulos);
+
+
+        for (Articulo articulo : articulos) {
+            System.out.println(articulo.getNombre() + " " + articulo.getPrecio());
+        }
+
+
 
     }
 
-    @FXML
-    void unfocus(MouseEvent event) {
-        tblArticulos.getSelectionModel().clearSelection();
+    private void desopacarAllPaneModal(){
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), allPaneModal);
+        fadeTransition.setFromValue(0.45);
+        fadeTransition.setToValue(0.0);
+        fadeTransition.play();
+        fadeTransition.setOnFinished(event -> allPaneModal.setVisible(false));
+    }
+
+    private void opacarAllPaneModal(){
+        allPaneModal.setOpacity(0.0);
+        allPaneModal.setVisible(true);
+
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(300), allPaneModal);
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(0.45);
+        fadeTransition.play();
     }
 
     public void setArticulos(ObservableList<Articulo> articulos){
-        this.articulos = articulos;
+        ArticulosController.articulos = articulos;
     }
+
+
 }

@@ -3,6 +3,7 @@ package controller;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,20 +17,22 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import model.*;
 
 import com.google.gson.*;
+import model.Articulos.*;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -42,7 +45,7 @@ public class MainController implements Initializable{
     private Pane allPane;
 
     @FXML
-    private Pane allPane1; // este es el panel que se activaal pulsar el boton del menu vertical
+    private Pane allPane1;
 
     @FXML
     private AnchorPane anchorMain;
@@ -72,9 +75,6 @@ public class MainController implements Initializable{
     private Button btnMoveTicket;
 
     @FXML
-    private ComboBox<TipoPedido> cboxTipoPedido;
-
-    @FXML
     private ComboBox<Categorias> cboxCatArticulos;
 
     @FXML
@@ -96,18 +96,20 @@ public class MainController implements Initializable{
     private TableColumn<Articulo, Double> colPrecio;
 
     @FXML
-    private TableColumn<?, ?> colArticuloInTicket;
+    private TableColumn<Ticket, String> colArticuloInTicket;
 
     @FXML
-    private TableColumn<?, ?> colPrecioInTicket;
+    private TableColumn<Ticket, Double> colPrecioInTicket;
 
     @FXML
-    private TableColumn<?, ?> colQtyInTicket;
+    private TableColumn<Ticket, Integer> colQtyInTicket;
 
     @FXML
-    private TableView<?> tblTicket;
+    private TableView<Ticket> tblTicket;
 
     private ObservableList<Articulo> articulos;
+    private final ObservableList<Ticket> tickets = FXCollections.observableArrayList();
+
 
     @FXML
     private Pane verticalPane;
@@ -169,7 +171,7 @@ public class MainController implements Initializable{
             mainStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
             mainStage.show();
 		}catch(IOException e){
-            e.printStackTrace();
+            System.out.println(e.getMessage());
 		}
 	}
 
@@ -202,7 +204,7 @@ public class MainController implements Initializable{
     }
 
     @FXML
-    void openVerticalMenu(ActionEvent event) { //Abre el vertical menu con una transicion que dure 300 milisegundos y establece el valor de opacidad de 0.0 a 1.0
+    void openVerticalMenu(ActionEvent event) {
         verticalPane.setMouseTransparent(false);
         allPane1.setMouseTransparent(false);
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(150), verticalPane);
@@ -238,7 +240,7 @@ public class MainController implements Initializable{
         alert.setHeaderText("Estás a punto de cerrar la aplicación");
         alert.setContentText("¿Estás seguro?");
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.get() == ButtonType.OK) {
+		if(result.get() == ButtonType.OK) {
             System.exit(0);
         }
     }
@@ -301,17 +303,8 @@ public class MainController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Initialize");
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        String rutaProyecto = System.getProperty("user.dir");
-        String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
-        String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
         unfocus();
-        cboxTipoPedido.getItems().addAll(TipoPedido.values());
         cboxCatArticulos.getItems().addAll(Categorias.values());
-        cboxTipoPedido.setValue(TipoPedido.COMER_AQUI);
         cboxCatArticulos.setValue(Categorias.TODOS);
         hamburgerPane.setTranslateX(-205);
         verticalPane.setVisible(true);
@@ -323,6 +316,9 @@ public class MainController implements Initializable{
 
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
+        colArticuloInTicket.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colQtyInTicket.setCellValueFactory(new PropertyValueFactory<>("qty"));
+        colPrecioInTicket.setCellValueFactory(new PropertyValueFactory<>("total"));
 
 
         cboxCatArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -338,58 +334,15 @@ public class MainController implements Initializable{
                 tblArticulos.setItems(filteredArticulos);
             }
         });
-/*
-        articulos = FXCollections.observableArrayList();
 
-        tblArticulos.setItems(articulos);
-        Articulo solo = new Cafe("Solo", 1.5);
-        Articulo bombon = new Cafe("Bombon", 3.0);
-        Articulo carajillo = new Cafe("Carajillo", 3.5);
-        Articulo manzana = new Fruta("Manzana", 1.0);
-        articulos.addAll(solo, bombon, carajillo, manzana);
-
-
-        File fileCoffee = new File(rutaJsonCoffes);
-        File fileFruits = new File(rutaJsonFruits);
-
-        try{
-            FileWriter writer;
-            writer = new FileWriter(fileCoffee);
-
-            JsonArray jsonArray = new JsonArray();
-            for (Articulo articulo : articulos) {
-                if(articulo.getClass().getSimpleName().equals("Cafe")){
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("nombre", articulo.getNombre());
-                    jsonObject.addProperty("precio", articulo.getPrecio());
-                    jsonArray.add(jsonObject);
-                }
+        tblTicket.itemsProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                btnTickets.setText("GUARDAR TICKET");
+            } else {
+                btnTickets.setText("TICKETS ABIERTOS");
             }
-            gson.toJson(jsonArray, writer);
-            writer.close();
-		}catch(IOException e){
-			throw new RuntimeException(e);
-		}
+        });
 
-        try{
-            FileWriter writer;
-            writer = new FileWriter(fileFruits);
-
-            JsonArray jsonArray = new JsonArray();
-            for (Articulo articulo : articulos) {
-                if(articulo.getClass().getSimpleName().equals("Fruta")){
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("nombre", articulo.getNombre());
-                    jsonObject.addProperty("precio", articulo.getPrecio());
-                    jsonArray.add(jsonObject);
-                }
-            }
-            gson.toJson(jsonArray, writer);
-            writer.close();
-        }catch(IOException e){
-            throw new RuntimeException(e);
-        }
-        */
 
 		cargarArticulos();
 
@@ -402,6 +355,9 @@ public class MainController implements Initializable{
         String rutaProyecto = System.getProperty("user.dir");
         String rutaJsonCoffes = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "coffes.json";
         String rutaJsonFruits = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "fruits.json";
+        String rutaJsonDrinks = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "drinks.json";
+        String rutaJsonDesserts = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "desserts.json";
+        String rutaJsonOthers = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "others.json";
 
         articulos = FXCollections.observableArrayList();
 
@@ -428,13 +384,13 @@ public class MainController implements Initializable{
 
                     tblArticulos.setItems(articulos);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             } else {
                 System.out.println("El archivo coffes.json no existe o está vacío en la ruta especificada.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         try {
@@ -459,14 +415,108 @@ public class MainController implements Initializable{
 
                     tblArticulos.setItems(articulos);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             } else {
                 System.out.println("El archivo fruits.json no existe o está vacío en la ruta especificada.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+
+        try{
+            File file = new File(rutaJsonDrinks);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Refresco(nombre,precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("El archivo drinks.json no existe o está vacío en la ruta especificada.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try{
+            File file = new File(rutaJsonDesserts);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Postre(nombre,precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("El archivo desserts.json no existe o está vacío en la ruta especificada.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try{
+            File file = new File(rutaJsonOthers);
+            if (file.exists() && file.length() > 0) {
+                try {
+                    FileReader reader = new FileReader(file);
+                    JsonElement jsonElement = gson.fromJson(reader, JsonElement.class);
+                    JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+                    for (JsonElement jsonElement1 : jsonArray) {
+                        JsonObject jsonObject = jsonElement1.getAsJsonObject();
+                        if (jsonObject.has("nombre") && jsonObject.has("precio")) {
+                            String nombre = jsonObject.get("nombre").getAsString();
+                            double precio = jsonObject.get("precio").getAsDouble();
+                            Articulo articulo = new Otro(nombre,precio);
+                            articulos.add(articulo);
+                        } else {
+                            System.out.println("El objeto JSON no tiene los atributos 'nombre' y 'precio'.");
+                        }
+                    }
+
+                    tblArticulos.setItems(articulos);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                System.out.println("El archivo others.json no existe o está vacío en la ruta especificada.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
 
         Set<Articulo> articulosSet = new TreeSet<>(Comparator.comparing(Articulo::getNombre));
 
@@ -475,10 +525,6 @@ public class MainController implements Initializable{
         articulos.clear();
         articulos.addAll(articulosSet);
 
-        // Depuración
-        for (Articulo articulo : articulos) {
-            //System.out.println("nombre: " + articulo.getNombre() + ", precio: " + articulo.getPrecio());
-        }
     }
 
 
@@ -491,6 +537,7 @@ public class MainController implements Initializable{
 
 
 	/*
+	Método para abrir el selector de archivos
     @FXML
     void openFileChooser(ActionEvent event) {
 
@@ -537,6 +584,54 @@ public class MainController implements Initializable{
 		}
     }
 
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        Articulo selectedArticulo = tblArticulos.getSelectionModel().getSelectedItem();
+
+        if(selectedArticulo != null){
+            if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
+                System.out.println("doble click en: " + selectedArticulo.getNombre());
+
+                // Un ticket es un objeto Ticket que tiene una cantidad y un articulo
+                // recorre los tickets y verifica si hay alguno con el mismo nombre
+                Ticket ticketEncontrado = null;
+
+                for (Ticket ticket : tickets) {
+                    if (ticket.getArticulo().getNombre().equals(selectedArticulo.getNombre())) {
+                        ticketEncontrado = ticket;
+                        ticketEncontrado.increaseQuantity();
+                        ticketEncontrado.updatePrecio();
+                        tickets.add(ticketEncontrado);
+                        tickets.remove(ticket);
+                        break;
+                    }else {
+                        ticketEncontrado = null;
+                    }
+                }
+                if(ticketEncontrado == null){
+                    tickets.add(new Ticket(1, selectedArticulo));
+                }
+
+                Set<Ticket> ticketsSet = new TreeSet<>(Comparator.comparing(Ticket::getNombre));
+                ticketsSet.addAll(tickets);
+                tickets.clear();
+                tickets.addAll(ticketsSet);
+                tblTicket.setItems(tickets);
+                tblTicket.refresh();
+
+                //recorre los tickets y sumando las cantidades
+
+                int total = 0;
+                for (Ticket ticket : tickets) {
+                    total += ticket.getQty();
+                }
+                lblTicket.setText("TICKET  " + total);
+
+            }
+        }
+
+    }
+
 
     @FXML
     void unfocus() {
@@ -547,16 +642,76 @@ public class MainController implements Initializable{
         btnTickets.setFocusTraversable(false);
         btnVerticalMenu.setFocusTraversable(false);
         cboxCatArticulos.setFocusTraversable(false);
-        cboxTipoPedido.setFocusTraversable(false);
         lblTicket.setFocusTraversable(false);
         tblTicket.setFocusTraversable(false);
         tblArticulos.setFocusTraversable(false);
         txtSearch.setVisible(false);
         lblTicket.getParent().requestFocus();
-        tblArticulos.getSelectionModel().clearSelection();
     }
 
     public void setArticulos(ObservableList<Articulo> articulos){
         this.articulos = articulos;
+    }
+
+    @FXML
+    void clickOnbtnTickets(MouseEvent event) {
+        if(btnTickets.getText().equals("TICKETS ABIERTOS")){
+            Parent root;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/ListaTicketsAbiertos.fxml"));
+            try{
+                root = loader.load();
+            }catch(IOException e){
+                throw new RuntimeException(e);
+            }
+            OpenListController controller = loader.getController();
+            controller.setStage((Stage) btnBuscar.getScene().getWindow());
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            Scene createItemScene = new Scene(root);
+            modalStage.setScene(createItemScene);
+            modalStage.setTitle("Cup of Java - Lista de Tickets");
+            modalStage.setResizable(false);
+            modalStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+        }else if(btnTickets.getText().equals("GUARDAR TICKET")){
+
+            Parent root;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/SaveTicketForm.fxml"));
+            try{
+                root = loader.load();
+            }catch(IOException e){
+                throw new RuntimeException(e);
+            }
+
+            SaveTicketController controller = loader.getController();
+            controller.setTickets(tickets);
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            Scene createItemScene = new Scene(root);
+            modalStage.setScene(createItemScene);
+            modalStage.setTitle("Cup of Java - Guardar Ticket");
+            modalStage.setResizable(false);
+            modalStage.getIcons().add(new Image(getClass().getResource("../app/assets/imgs/squareFavicon.png").toString()));
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+            tickets.clear();
+            tblTicket.setItems(tickets);
+            tblTicket.refresh();
+            lblTicket.setText("TICKET");
+            btnTickets.setText("TICKETS ABIERTOS");
+
+            tickets.addListener((ListChangeListener<Ticket>) c -> {
+                if (!tickets.isEmpty()) {
+                    btnTickets.setText("GUARDAR TICKET");
+                } else {
+                    btnTickets.setText("TICKETS ABIERTOS");
+                }
+            });
+
+        }
     }
 }

@@ -141,7 +141,6 @@ public class RegisterController implements Initializable{
                     input.setStyle("-fx-text-fill: black;");
                     result = dialog.showAndWait();
                     if(result.isPresent()){
-                        //System.out.println("Texto: " + result.get());
                         if(result.get().equals("admin")){
                             try{
 
@@ -159,7 +158,6 @@ public class RegisterController implements Initializable{
                                 usuarios.add(nuevoUsuarioElement);
 
                                 FileWriter writer = new FileWriter("src/app/assets/json/users.json");
-                                // Lo escribe en el archivo JSON, pero formateado
                                 gson.toJson(usuarios, writer);
                                 writer.close();
 
@@ -172,7 +170,7 @@ public class RegisterController implements Initializable{
                                 pwdPassword.clear();
                                 abrirLogin(event);
                             }catch(IOException e){
-                                e.printStackTrace();
+                                System.out.println(e.getMessage());
                             }
                         }else{
                             Alert alert = new Alert(Alert.AlertType.WARNING);
