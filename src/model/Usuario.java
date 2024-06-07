@@ -41,9 +41,6 @@ public class Usuario {
 		return Objects.hash(username, password);
 	}
 
-	public void addUser(Usuario user){
-		users.add(user);
-	}
 
 	public static List<Usuario> getUsers(){
 		return users;

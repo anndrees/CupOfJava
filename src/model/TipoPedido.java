@@ -18,20 +18,13 @@ public enum TipoPedido {
 	}
 
 	public static TipoPedido fromString(String tipo) {
-		switch(tipo.toLowerCase()) {
-			case "comer aquí":
-				return AQUI;
-			case "comer aqui":
-				return AQUI;
-			case "para llevar":
-				return LLEVAR;
-			case "domicilio":
-				return DOMICILIO;
-			case "para recoger":
-				return RECOGER;
-			default:
-				return null;
-		}
+		return switch(tipo.toLowerCase()){
+			case "comer aquí", "comer aqui" -> AQUI;
+			case "para llevar" -> LLEVAR;
+			case "domicilio" -> DOMICILIO;
+			case "para recoger" -> RECOGER;
+			default -> null;
+		};
 	}
 
 }

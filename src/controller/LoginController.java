@@ -136,7 +136,6 @@ public class LoginController implements Initializable{
                         root = loader.load();
                         MainController mainController = loader.getController();
                         mainController.setCurrentUser(user);
-                        System.out.println("Usuario logeado: " + user.getUsername());
                         Stage mainStage = new Stage();
                         mainStage.setScene(new Scene(root));
                         mainStage.setTitle("Cup of Java");

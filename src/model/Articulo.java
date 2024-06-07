@@ -1,15 +1,7 @@
 package model;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class Articulo{
-
-	private final List<Articulo> articulos = new ArrayList<>();
 
 	public String nombre;
 	public double precio;
@@ -55,11 +47,6 @@ public abstract class Articulo{
 	@Override
 	public int hashCode(){
 		return Objects.hash(nombre, precio, categoria);
-	}
-
-	public ObservableList<Articulo> getArticulos() {
-		return FXCollections.observableList(articulos);
-
 	}
 }
 

@@ -343,11 +343,7 @@ public class MainController implements Initializable{
             }
         });
 
-
 		cargarArticulos();
-
-
-        System.out.println("Artículos cargados: " + articulos.size());
     }
 
     private void cargarArticulos() {
@@ -590,9 +586,8 @@ public class MainController implements Initializable{
 
         if(selectedArticulo != null){
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-                System.out.println("doble click en: " + selectedArticulo.getNombre());
 
-                // Un ticket es un objeto Ticket que tiene una cantidad y un articulo
+                // Un ticket es un objeto Ticket que tiene una cantidad y un artículo
                 // recorre los tickets y verifica si hay alguno con el mismo nombre
                 Ticket ticketEncontrado = null;
 

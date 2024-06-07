@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,13 +7,11 @@ public class TicketAbierto{
 
 	String nombre;
 	TipoPedido tipo;
-	private List<Ticket> ticketsAbiertos;
 	double total;
 
 	public TicketAbierto(String nombre, TipoPedido tipo, List<Ticket> ticketsAbiertos){
 		this.nombre = nombre;
 		this.tipo = tipo;
-		this.ticketsAbiertos = ticketsAbiertos;
 
 		for (Ticket ticket : ticketsAbiertos) {
 			total += ticket.getTotal();
@@ -25,16 +22,8 @@ public class TicketAbierto{
 		return nombre;
 	}
 
-	public String getTipo(){
-		return tipo.toString();
-	}
-
 	public TipoPedido getTipoPedido(){
 		return tipo;
-	}
-
-	public List<Ticket> getTicketsAbiertos(){
-		return ticketsAbiertos;
 	}
 
 	public double getTotal(){
@@ -43,10 +32,6 @@ public class TicketAbierto{
 
 	public void setTotal(double total){
 		this.total = total;
-	}
-
-	public void setTicketsAbiertos(List<Ticket> ticketsAbiertos){
-		this.ticketsAbiertos = ticketsAbiertos;
 	}
 
 	public void setTipo(TipoPedido tipo){

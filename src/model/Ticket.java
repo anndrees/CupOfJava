@@ -1,8 +1,5 @@
 package model;
 
-import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public class Ticket{
@@ -19,10 +16,6 @@ public class Ticket{
 
 	public Integer getQty(){
 		return qty;
-	}
-
-	public void setQty(Integer qty){
-		this.qty = qty;
 	}
 
 	public Articulo getArticulo(){
@@ -45,10 +38,6 @@ public class Ticket{
 		return total;
 	}
 
-	public void setTotal(Double total){
-		this.total = total;
-	}
-
 	public void increaseQuantity(){
 		this.qty++;
 	}
@@ -56,10 +45,6 @@ public class Ticket{
 	public void updatePrecio(){
 		double resultado =this.qty * this.articulo.getPrecio();
 		this.total =  Math.round(resultado * 100.0) / 100.0;
-	}
-
-	public void decreaseQuantity(){
-		this.qty--;
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -47,21 +46,20 @@ public class OpenListController implements Initializable{
 
     Stage mainStage;
 
-    public static List<TicketAbierto> getTicketsAbiertos(){
-        return ticketsAbiertos;
-    }
-
     @FXML
     private void handleTableClick(MouseEvent event) {
+        /*
+        MÉTODO PARA CONTROLAR EL DOBLE CLICK
         TicketAbierto selectedTicket = tblOpenTickets.getSelectionModel().getSelectedItem();
 
         if(selectedTicket != null){
             if (event.getClickCount() == 2 && event.getButton() == MouseButton.PRIMARY) {
-                System.out.println("doble click en: " + selectedTicket.getNombre());
                 //abrir el ticket
 
             }
         }
+
+         */
 
     }
 
@@ -115,7 +113,7 @@ public class OpenListController implements Initializable{
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -165,7 +163,7 @@ public class OpenListController implements Initializable{
                     writer.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
             // Eliminar el ticket de la lista observable
@@ -199,18 +197,16 @@ public class OpenListController implements Initializable{
             String tipoStr = cboxTipo.getValue().toString();
             TipoPedido tipoNuevo;
 
-            if(tipoStr.equals("Comer aquí")){
-                tipoNuevo = TipoPedido.AQUI;
-            }else if(tipoStr.equals("Para llevar")){
-                tipoNuevo = TipoPedido.LLEVAR;
-            }else if(tipoStr.equals("Domicilio")){
-                tipoNuevo = TipoPedido.DOMICILIO;
-            }else if(tipoStr.equals("Para recoger")){
-                tipoNuevo = TipoPedido.RECOGER;
-            }else{
-                System.out.println("Tipo de pedido no válido");
-                return;
-            }
+			switch(tipoStr){
+				case "Comer aquí" -> tipoNuevo = TipoPedido.AQUI;
+				case "Para llevar" -> tipoNuevo = TipoPedido.LLEVAR;
+				case "Domicilio" -> tipoNuevo = TipoPedido.DOMICILIO;
+				case "Para recoger" -> tipoNuevo = TipoPedido.RECOGER;
+				default -> {
+					System.out.println("Tipo de pedido no válido");
+					return;
+				}
+			}
 
             selectedTicket.setNombre(nombreNuevo);
             selectedTicket.setTipo(tipoNuevo);
@@ -233,7 +229,6 @@ public class OpenListController implements Initializable{
                         if(ticketNombre.equals(nombreOriginal)){ // Comparar con el nombre original
                             ticketObj.addProperty("nombre", nombreNuevo);
                             ticketObj.addProperty("tipo", tipoNuevo.toString());
-                            // También podrías necesitar modificar otros campos si los hay
                             break;
                         }
                     }
@@ -244,7 +239,7 @@ public class OpenListController implements Initializable{
                     writer.close();
                 }
             }catch(IOException e){
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
             // Actualizar la tabla si es necesario
@@ -256,38 +251,4 @@ public class OpenListController implements Initializable{
         }
     }
 
-
-
-
-    private void modificarTicketInJson(TicketAbierto ticket){
-
-        try {
-            String rutaProyecto = System.getProperty("user.dir");
-            String rutaJson = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "OpenTickets.json";
-            // elimina el ticket del json
-            FileReader reader = new FileReader(rutaJson);
-            JsonParser parser = new JsonParser();
-            JsonElement json = parser.parse(reader);
-            JsonArray tickets = json.getAsJsonArray();
-            for(JsonElement ticketElement : tickets){
-                JsonObject ticketObj = ticketElement.getAsJsonObject();
-                if(ticketObj.has("nombre") && ticketObj.has("total")){
-                    String nombre = ticketObj.get("nombre").getAsString();
-                    String tipo2 = ticketObj.get("tipo").getAsString();
-                    if(nombre.equals(ticket.getNombre()) && tipo2.equals(ticket.getTipo().toString())){
-                        ticketObj.addProperty("nombre", ticket.getNombre());
-                        ticketObj.addProperty("tipo", ticket.getTipo());
-                        ticketObj.addProperty("total", ticket.getTotal());
-                        break;
-                    }
-                }
-            }
-            FileWriter writer = new FileWriter(rutaJson);
-            writer.write(json.toString());
-            writer.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

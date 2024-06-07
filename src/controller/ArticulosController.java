@@ -308,7 +308,6 @@ public class ArticulosController implements Initializable{
 
         tblArticulos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                System.out.println("Elemento seleccionado: " + newValue.getNombre());
 
 				txtName.setText(newValue.getNombre());
                 txtPrice.setText(newValue.getPrecio() + "");
@@ -326,8 +325,6 @@ public class ArticulosController implements Initializable{
         });
         articulos = FXCollections.observableArrayList();
         cargarArticulos();
-        
-        System.out.println("Artículos cargados: " + articulos.size());
     }
 
     private void cargarArticulos() {
@@ -500,10 +497,6 @@ public class ArticulosController implements Initializable{
         articulosSet.addAll(articulos);
         articulos.clear();
         articulos.addAll(articulosSet);
-
-        for (Articulo articulo : articulos) {
-            System.out.println("nombre: " + articulo.getNombre() + ", precio: " + articulo.getPrecio());
-        }
     }
 
 
@@ -580,7 +573,6 @@ public class ArticulosController implements Initializable{
         String precio = txtPrice.getText().replace(",", ".");
 
         if(precio.matches("[0-9]+(\\.[0-9]+)?")) {
-            System.out.println("precio " + precio);
 
             selectedArticulo.setNombre(nombre);
             selectedArticulo.setPrecio(Double.parseDouble(precio));
@@ -767,7 +759,7 @@ public class ArticulosController implements Initializable{
             String rutaJsonOthers = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "others.json";
 
 			switch(selectedArticulo){
-				case Cafe cafe -> {
+				case Cafe ignored -> {
 					try{
 						File file = new File(rutaJsonCoffes);
 						if(file.exists() && file.length() > 0){
@@ -786,7 +778,7 @@ public class ArticulosController implements Initializable{
 						System.out.println(e.getMessage());
 					}
 				}
-				case Fruta fruta -> {
+				case Fruta ignored -> {
 					try{
 						File file = new File(rutaJsonFruits);
 						if(file.exists() && file.length() > 0){
@@ -805,7 +797,7 @@ public class ArticulosController implements Initializable{
 						System.out.println(e.getMessage());
 					}
 				}
-				case Refresco refresco -> {
+				case Refresco ignored -> {
 					try{
 						File file = new File(rutaJsonDrinks);
 						if(file.exists() && file.length() > 0){
@@ -824,7 +816,7 @@ public class ArticulosController implements Initializable{
 						System.out.println(e.getMessage());
 					}
 				}
-				case Postre postre -> {
+				case Postre ignored -> {
 					try{
 						File file = new File(rutaJsonDesserts);
 						if(file.exists() && file.length() > 0){
@@ -843,7 +835,7 @@ public class ArticulosController implements Initializable{
 						System.out.println(e.getMessage());
 					}
 				}
-				case Otro otro -> {
+				case Otro ignored -> {
 					try{
 						File file = new File(rutaJsonOthers);
 						if(file.exists() && file.length() > 0){
@@ -909,7 +901,6 @@ public class ArticulosController implements Initializable{
         opacarAllPaneModal();
 
         modalStage.showAndWait();
-        System.out.println("despues de abrir el modal");
         desopacarAllPaneModal();
 
 
@@ -918,14 +909,6 @@ public class ArticulosController implements Initializable{
         articulos.clear();
         articulos.addAll(articulosSet);
         tblArticulos.setItems(articulos);
-
-
-        for (Articulo articulo : articulos) {
-            System.out.println(articulo.getNombre() + " " + articulo.getPrecio());
-        }
-
-
-
     }
 
     private void desopacarAllPaneModal(){

@@ -126,7 +126,6 @@ public class CreateItemController implements Initializable{
 				precio = precio.substring(0, precio.indexOf(".") + 2) + "0";
 			}
 		}
-		System.out.println(precio);
 
 		if(!nombre.isEmpty() && precio.matches("^-?[0-9]+(\\.[0-9]{2})?$") && !precio.contains("€") && categoria != null) {
 
@@ -152,7 +151,6 @@ public class CreateItemController implements Initializable{
 						System.out.println(e.getMessage());
 					}
 
-					System.out.println("Articulo creado: " + cafe.getNombre() + " " + cafe.getPrecio());
 					break;
 				case "Frutas":
 					Fruta fruta = new Fruta(nombre, Double.parseDouble(precio));
@@ -174,7 +172,6 @@ public class CreateItemController implements Initializable{
 					} catch (IOException e) {
 						System.out.println(e.getMessage());
 					}
-					System.out.println("Articulo creado: " + fruta.getNombre() + " " + fruta.getPrecio());
 					break;
 				case "Refrescos":
 					Refresco refresco = new Refresco(nombre, Double.parseDouble(precio));
@@ -195,7 +192,6 @@ public class CreateItemController implements Initializable{
 					} catch (IOException e) {
 						System.out.println(e.getMessage());
 					}
-					System.out.println("Articulo creado: " + refresco.getNombre() + " " + refresco.getPrecio());
 					break;
 				case "Postres":
 					Postre postre = new Postre(nombre, Double.parseDouble(precio));
@@ -216,7 +212,6 @@ public class CreateItemController implements Initializable{
 					} catch (IOException e) {
 						System.out.println(e.getMessage());
 					}
-					System.out.println("Articulo creado: " + postre.getNombre() + " " + postre.getPrecio());
 					break;
 				case "Otros":
 					Otro otro = new Otro(nombre, Double.parseDouble(precio));
@@ -237,7 +232,6 @@ public class CreateItemController implements Initializable{
 					} catch (IOException e) {
 						System.out.println(e.getMessage());
 					}
-					System.out.println("Articulo creado: " + otro.getNombre() + " " + otro.getPrecio());
 					break;
 				default:
 					System.out.println("No se ha podido crear el articulo");

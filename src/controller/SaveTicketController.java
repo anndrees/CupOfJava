@@ -43,7 +43,7 @@ public class SaveTicketController implements Initializable{
     private TextField txtNombre;
 
 	private List<Ticket> tickets = new ArrayList<>();
-	private List<TicketAbierto> ticketsAbiertos = new ArrayList<>();
+	private final List<TicketAbierto> ticketsAbiertos = new ArrayList<>();
 
     @FXML
     void cancelar(ActionEvent event) {
@@ -70,9 +70,6 @@ public class SaveTicketController implements Initializable{
 		TipoPedido tipo = cboxTipoTicket.getValue();
 
 		cargarTicketsAbiertos();
-
-		System.out.println("Imprimiendo tickets");
-		System.out.println(ticketsAbiertos);
 
 		for (TicketAbierto ticket : ticketsAbiertos) {
 			if (ticket.getNombre().equals(ticketName)) {
@@ -135,7 +132,7 @@ public class SaveTicketController implements Initializable{
 			stage.close();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("No se pudo crear el ticket");
@@ -149,7 +146,7 @@ public class SaveTicketController implements Initializable{
 		String rutaJson = rutaProyecto + File.separator + "src" + File.separator + "app" + File.separator + "assets" + File.separator + "json" + File.separator + "OpenTickets.json";
 
 		try {
-			// lee el json , y carga todos los tickets abiertos en la lista ticketsAbiertos
+			// Lee el json, y carga todos los tickets abiertos en la lista ticketsAbiertos
 			FileReader reader = new FileReader(rutaJson);
 			JsonParser parser = new JsonParser();
 			JsonElement json = parser.parse(reader);
@@ -169,7 +166,7 @@ public class SaveTicketController implements Initializable{
 			}
 			reader.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
